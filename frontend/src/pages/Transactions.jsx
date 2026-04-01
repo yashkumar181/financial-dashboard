@@ -1,0 +1,299 @@
+import React from 'react';
+import { 
+  Download, Plus, Filter, ChevronDown, Calendar, 
+  MoreVertical, CreditCard, Laptop, Home, ShoppingCart, 
+  Tv, ChevronLeft, ChevronRight, TrendingUp, Activity
+} from 'lucide-react';
+
+const Transactions = () => {
+  const transactions = [
+    {
+      id: 1,
+      date: 'Oct 24, 2023',
+      time: '09:42 AM',
+      merchant: 'Apple Store Soho',
+      desc: 'Electronic Purchase',
+      icon: Laptop,
+      iconBg: 'bg-gray-100',
+      iconColor: 'text-gray-800',
+      catMain: 'Leisure',
+      catSub: 'Electronics',
+      source: 'Amex Gold',
+      sourceLast: '1004',
+      sourceIcon: CreditCard,
+      amount: '-$1,299.00',
+      amountType: 'negative',
+      tag1: { label: 'ESSENTIAL', active: true, color: 'bg-[#FFEFEA] text-[#991B1B]' },
+      tag2: { label: 'WANT', active: false, color: 'text-gray-300' }
+    },
+    {
+      id: 2,
+      date: 'Oct 22, 2023',
+      time: '02:15 PM',
+      merchant: 'Airbnb Refund',
+      desc: 'Travel Credit',
+      icon: Home,
+      iconBg: 'bg-red-50',
+      iconColor: 'text-red-500',
+      catMain: 'Travel',
+      catSub: 'Lodging',
+      source: 'Chase Sapphire',
+      sourceLast: '4291',
+      sourceIcon: CreditCard,
+      amount: '+$452.20',
+      amountType: 'positive',
+      subAmount: 'REFUND PROCESSED',
+      tag1: { label: 'NON-ESSENTIAL', active: false, color: 'text-gray-300' },
+      tag2: null
+    },
+    {
+      id: 3,
+      date: 'Oct 21, 2023',
+      time: '11:00 AM',
+      merchant: 'Whole Foods Market',
+      desc: 'Groceries',
+      icon: ShoppingCart,
+      iconBg: 'bg-blue-50',
+      iconColor: 'text-blue-500',
+      catMain: 'Personal',
+      catSub: 'Food',
+      source: 'Amex Gold',
+      sourceLast: '1004',
+      sourceIcon: CreditCard,
+      amount: '-$84.12',
+      amountType: 'negative',
+      tag1: { label: 'ESSENTIAL', active: true, color: 'bg-[#FFEFEA] text-[#991B1B]' },
+      tag2: { label: 'WANT', active: false, color: 'text-gray-300' }
+    },
+    {
+      id: 4,
+      date: 'Oct 20, 2023',
+      time: '08:30 PM',
+      merchant: 'Netflix Subscription',
+      desc: 'Digital Services',
+      icon: Tv,
+      iconBg: 'bg-gray-900',
+      iconColor: 'text-red-600',
+      catMain: 'Leisure',
+      catSub: 'Streaming',
+      source: 'Apple Card',
+      sourceLast: '8820',
+      sourceIcon: CreditCard,
+      amount: '-$19.99',
+      amountType: 'negative',
+      tag1: { label: 'NEED', active: false, color: 'text-gray-300' },
+      tag2: { label: 'NON-ESSENTIAL', active: true, color: 'bg-[#F0F5FF] text-[#0A3D8B]' }
+    }
+  ];
+
+  return (
+    <div className="flex-1 overflow-auto p-4 md:p-10">
+      
+      <div className="flex flex-col md:flex-row justify-between md:items-end mb-8 gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-[#0F172A] mb-1">Transactions</h1>
+          <p className="text-sm text-gray-500">Surgical overview of your fiscal movements.</p>
+        </div>
+        <div className="flex space-x-3">
+          <button className="flex items-center px-4 py-2 bg-white border border-gray-200 text-[#0F172A] rounded-lg text-xs font-semibold hover:bg-gray-50 transition-colors shadow-sm">
+            <Download className="w-4 h-4 mr-2" />
+            Export PDF
+          </button>
+          <button className="flex items-center px-4 py-2 bg-[#0A3D8B] text-white rounded-lg text-xs font-semibold hover:bg-[#082f6b] transition-colors shadow-sm">
+            <Plus className="w-4 h-4 mr-2" />
+            Add Transaction
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-50 overflow-hidden mb-8">
+        
+        <div className="p-4 md:p-6 flex flex-col xl:flex-row gap-4 border-b border-gray-50 items-start xl:items-center">
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <Filter className="w-4 h-4 text-gray-400" />
+              </div>
+              <select className="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg appearance-none focus:outline-none focus:border-[#0A3D8B] shadow-sm">
+                <option>All Categories</option>
+              </select>
+              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                <ChevronDown className="w-4 h-4 text-gray-400" />
+              </div>
+            </div>
+            
+            <div className="relative">
+              <select className="w-full pl-4 pr-10 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg appearance-none focus:outline-none focus:border-[#0A3D8B] shadow-sm">
+                <option>All Accounts</option>
+              </select>
+              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                <ChevronDown className="w-4 h-4 text-gray-400" />
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <Calendar className="w-4 h-4 text-gray-400" />
+              </div>
+              <input type="text" value="Oct 01 - Oct 31, 2023" readOnly className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg focus:outline-none focus:border-[#0A3D8B] shadow-sm cursor-pointer" />
+            </div>
+          </div>
+          <button className="text-[#0A3D8B] text-xs font-bold hover:underline px-2 whitespace-nowrap">
+            Clear Filters
+          </button>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left min-w-[1000px]">
+            <thead>
+              <tr className="border-b border-gray-50">
+                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Date</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Merchant</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Payment Source</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Amount</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tagging</th>
+                <th className="px-6 py-4"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {transactions.map((tx) => {
+                const MerchIcon = tx.icon;
+                const SourceIcon = tx.sourceIcon;
+                return (
+                  <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-5">
+                      <p className="text-xs font-bold text-[#0F172A] whitespace-nowrap">{tx.date}</p>
+                      <p className="text-[10px] text-gray-400 font-medium">{tx.time}</p>
+                    </td>
+                    <td className="px-6 py-5 flex items-center space-x-4">
+                      <div className={`w-10 h-10 rounded-lg ${tx.iconBg} ${tx.iconColor} flex items-center justify-center shrink-0`}>
+                        <MerchIcon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-[#0F172A] whitespace-nowrap">{tx.merchant}</p>
+                        <p className="text-[10px] text-gray-500 font-medium">{tx.desc}</p>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5">
+                      <p className="text-[11px] font-medium text-gray-500 flex items-center">
+                        {tx.catMain} <ChevronRight className="w-3 h-3 mx-1 text-gray-300" /> <span className="text-[#0A3D8B] font-bold">{tx.catSub}</span>
+                      </p>
+                    </td>
+                    <td className="px-6 py-5">
+                      <div className="flex items-center space-x-3">
+                        <SourceIcon className="w-5 h-5 text-gray-400 shrink-0" />
+                        <div>
+                          <p className="text-xs font-bold text-[#0F172A]">{tx.source}</p>
+                          <p className="text-[10px] text-gray-500 font-medium">• {tx.sourceLast}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5 text-center">
+                      <p className={`text-sm font-bold ${tx.amountType === 'positive' ? 'text-[#991B1B]' : 'text-[#0F172A]'}`}>
+                        {tx.amount}
+                      </p>
+                      {tx.subAmount && (
+                        <p className="text-[8px] font-bold text-[#991B1B] uppercase tracking-widest mt-1">{tx.subAmount}</p>
+                      )}
+                    </td>
+                    <td className="px-6 py-5">
+                      <div className="flex items-center space-x-2">
+                        {tx.tag1 && (
+                          <span className={`text-[9px] font-bold px-2 py-1 rounded uppercase tracking-wider ${tx.tag1.color} ${!tx.tag1.active && 'bg-transparent'}`}>
+                            {tx.tag1.label}
+                          </span>
+                        )}
+                        {tx.tag2 && (
+                          <span className={`text-[9px] font-bold px-2 py-1 rounded uppercase tracking-wider ${tx.tag2.color} ${!tx.tag2.active && 'bg-transparent'}`}>
+                            {tx.tag2.label}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-5 text-right">
+                      <button className="text-gray-400 hover:text-gray-600">
+                        <MoreVertical className="w-5 h-5" />
+                      </button>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="p-4 md:p-6 border-t border-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-[11px] font-medium text-gray-500">
+            Showing <span className="font-bold text-[#0F172A]">1-4</span> of 142 transactions
+          </p>
+          <div className="flex items-center space-x-1">
+            <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:bg-gray-50 disabled:opacity-50">
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button className="w-8 h-8 flex items-center justify-center rounded bg-[#0A3D8B] text-white text-xs font-bold shadow-sm">
+              1
+            </button>
+            <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-[#0F172A] hover:bg-gray-50 text-xs font-bold transition-colors">
+              2
+            </button>
+            <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-[#0F172A] hover:bg-gray-50 text-xs font-bold transition-colors">
+              3
+            </button>
+            <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50">
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div className="bg-[#0A3D8B] p-6 rounded-2xl shadow-md text-white relative overflow-hidden">
+          <div className="absolute right-0 bottom-0 opacity-20 transform translate-x-1/4 translate-y-1/4 pointer-events-none">
+            <TrendingUp className="w-48 h-48" strokeWidth={1} />
+          </div>
+          <div className="relative z-10">
+            <p className="text-[9px] font-bold text-blue-200 tracking-widest uppercase mb-2">Monthly Burn</p>
+            <h3 className="text-4xl font-bold mb-4">$4,821.50</h3>
+            <span className="bg-white/20 text-white text-[10px] font-bold px-2.5 py-1 rounded-full">+12% vs last month</span>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-50 flex flex-col justify-between">
+          <p className="text-[9px] font-bold text-gray-400 tracking-widest uppercase mb-6">Essential vs Wants</p>
+          <div className="w-full flex h-3 rounded-full overflow-hidden mb-4">
+            <div className="bg-[#0A3D8B] h-full" style={{ width: '65%' }}></div>
+            <div className="bg-[#FFEFEA] h-full" style={{ width: '35%' }}></div>
+          </div>
+          <div className="flex justify-between items-end">
+            <div>
+              <h3 className="text-2xl font-bold text-[#0F172A]">65%</h3>
+              <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Essential Spending</p>
+            </div>
+            <Activity className="w-5 h-5 text-[#0A3D8B]" />
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-50 flex flex-col justify-between">
+          <p className="text-[9px] font-bold text-gray-400 tracking-widest uppercase mb-4">Active Refunds</p>
+          <h3 className="text-2xl font-bold text-[#991B1B] mb-4">$1,102.15</h3>
+          <div className="flex items-center space-x-3">
+            <div className="flex -space-x-2">
+              <div className="w-6 h-6 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center shrink-0 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1555529733-0e670560f4e1?w=100&auto=format&fit=crop&q=60" alt="Texture" className="w-full h-full object-cover" />
+              </div>
+              <div className="w-6 h-6 rounded-full bg-gray-900 border-2 border-white flex items-center justify-center text-white shrink-0">
+                <Laptop className="w-3 h-3" />
+              </div>
+            </div>
+            <p className="text-[10px] font-bold text-gray-500">3 Pending Credits</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  );
+};
+
+export default Transactions;
