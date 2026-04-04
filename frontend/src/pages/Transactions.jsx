@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { 
   Download, Plus, Filter, ChevronDown, Calendar, 
   MoreVertical, ChevronLeft, ChevronRight, TrendingUp, Activity, Search,
-  Laptop, Home, ShoppingCart, Tv, CreditCard // Imported for mapping
+  Laptop, Home, ShoppingCart, Tv, CreditCard
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 import AddTransactionModal from '../components/AddTransactionModal';
 
-// Map strings back to components
 const iconMap = { Laptop, Home, ShoppingCart, Tv, CreditCard };
 
 const Transactions = () => {
@@ -17,18 +16,56 @@ const Transactions = () => {
   const [categoryFilter, setCategoryFilter] = useState('All Categories');
   const [accountFilter, setAccountFilter] = useState('All Accounts');
   
-  // State to control modal visibility
+  // NEW: Advanced Sorting State
+  const [sortOrder, setSortOrder] = useState('Date (Newest)');
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const filteredTransactions = transactions.filter((tx) => {
+  // Helper to parse amount strings (e.g., "-$1,299.00" -> -1299.00)
+  const parseAmount = (amountStr) => {
+    return parseFloat(amountStr.replace(/[^0-9.-]+/g, ""));
+  };
+
+  // 1. Filter the transactions
+  let processedTransactions = transactions.filter((tx) => {
     const matchesSearch = tx.merchant.toLowerCase().includes(searchTerm.toLowerCase()) || tx.desc.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = categoryFilter === 'All Categories' || tx.catMain === categoryFilter;
     const matchesAccount = accountFilter === 'All Accounts' || tx.source === accountFilter;
     return matchesSearch && matchesCategory && matchesAccount;
   });
 
+  // 2. Sort the transactions (Advanced Filtering)
+  processedTransactions = processedTransactions.sort((a, b) => {
+    if (sortOrder === 'Amount (High to Low)') return parseAmount(b.amount) - parseAmount(a.amount);
+    if (sortOrder === 'Amount (Low to High)') return parseAmount(a.amount) - parseAmount(b.amount);
+    if (sortOrder === 'Date (Oldest)') return new Date(a.date) - new Date(b.date);
+    // Default: Date (Newest)
+    return new Date(b.date) - new Date(a.date);
+  });
+
   const clearFilters = () => {
-    setSearchTerm(''); setCategoryFilter('All Categories'); setAccountFilter('All Accounts');
+    setSearchTerm(''); setCategoryFilter('All Categories'); setAccountFilter('All Accounts'); setSortOrder('Date (Newest)');
+  };
+
+  // NEW: CSV Export Functionality
+  const handleExportCSV = () => {
+    // Define the CSV headers
+    const headers = "Date,Time,Merchant,Category,Account,Amount,Status\n";
+    
+    // Map data to CSV rows
+    const csvRows = processedTransactions.map(tx => {
+      // Wrap strings in quotes to prevent issues with commas in merchant names
+      return `"${tx.date}","${tx.time}","${tx.merchant}","${tx.catMain}","${tx.source}","${tx.amount}","${tx.status}"`;
+    }).join("\n");
+
+    // Create a Blob and trigger the download
+    const blob = new Blob([headers + csvRows], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `financial_export_${new Date().getTime()}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
   };
 
   return (
@@ -40,18 +77,19 @@ const Transactions = () => {
           <p className="text-sm text-gray-500">Surgical overview of your fiscal movements.</p>
         </div>
         <div className="flex space-x-3">
-          <button className="flex items-center px-4 py-2 bg-white border border-gray-200 text-[#0F172A] rounded-lg text-xs font-semibold hover:bg-gray-50 transition-colors shadow-sm">
+          
+          {/* Export Button is now wired up! */}
+          <button 
+            onClick={handleExportCSV}
+            className="flex items-center px-4 py-2 bg-white border border-gray-200 text-[#0F172A] rounded-lg text-xs font-semibold hover:bg-gray-50 transition-colors shadow-sm"
+          >
             <Download className="w-4 h-4 mr-2" />
-            Export PDF
+            Export CSV
           </button>
           
           {role === 'Admin' && (
-            <button 
-              onClick={() => setIsModalOpen(true)} // Open modal on click
-              className="flex items-center px-4 py-2 bg-[#0A3D8B] text-white rounded-lg text-xs font-semibold hover:bg-[#082f6b] transition-colors shadow-sm"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Transaction
+            <button onClick={() => setIsModalOpen(true)} className="flex items-center px-4 py-2 bg-[#0A3D8B] text-white rounded-lg text-xs font-semibold hover:bg-[#082f6b] transition-colors shadow-sm">
+              <Plus className="w-4 h-4 mr-2" /> Add Transaction
             </button>
           )}
         </div>
@@ -60,31 +98,43 @@ const Transactions = () => {
       <div className="bg-white rounded-2xl shadow-sm border border-gray-50 overflow-hidden mb-8">
         {/* Filters */}
         <div className="p-4 md:p-6 flex flex-col xl:flex-row gap-4 border-b border-gray-50 items-start xl:items-center">
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-5 gap-4 w-full">
             <div className="relative md:col-span-2">
               <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input type="text" placeholder="Search merchants or descriptions..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg focus:outline-none focus:border-[#0A3D8B] shadow-sm" />
+              <input type="text" placeholder="Search merchants..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg focus:outline-none focus:border-[#0A3D8B] shadow-sm" />
             </div>
+            
             <div className="relative">
-              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none"><Filter className="w-4 h-4 text-gray-400" /></div>
-              <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg appearance-none focus:outline-none focus:border-[#0A3D8B] shadow-sm">
+              <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="w-full pl-4 pr-8 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg appearance-none focus:outline-none focus:border-[#0A3D8B] shadow-sm">
                 <option>All Categories</option><option>Leisure</option><option>Travel</option><option>Personal</option>
               </select>
               <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none"><ChevronDown className="w-4 h-4 text-gray-400" /></div>
             </div>
+            
             <div className="relative">
-              <select value={accountFilter} onChange={(e) => setAccountFilter(e.target.value)} className="w-full pl-4 pr-10 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg appearance-none focus:outline-none focus:border-[#0A3D8B] shadow-sm">
+              <select value={accountFilter} onChange={(e) => setAccountFilter(e.target.value)} className="w-full pl-4 pr-8 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg appearance-none focus:outline-none focus:border-[#0A3D8B] shadow-sm">
                 <option>All Accounts</option><option>Amex Gold</option><option>Chase Sapphire</option><option>Manual Entry</option>
               </select>
               <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none"><ChevronDown className="w-4 h-4 text-gray-400" /></div>
             </div>
+
+            {/* Advanced Sorting Dropdown */}
+            <div className="relative">
+              <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} className="w-full pl-4 pr-8 py-2.5 bg-white border border-gray-200 text-[#0A3D8B] text-xs font-bold rounded-lg appearance-none focus:outline-none focus:border-[#0A3D8B] shadow-sm">
+                <option>Date (Newest)</option>
+                <option>Date (Oldest)</option>
+                <option>Amount (High to Low)</option>
+                <option>Amount (Low to High)</option>
+              </select>
+              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none"><ChevronDown className="w-4 h-4 text-[#0A3D8B]" /></div>
+            </div>
           </div>
-          <button onClick={clearFilters} className="text-[#0A3D8B] text-xs font-bold hover:underline px-2 whitespace-nowrap">Clear Filters</button>
+          <button onClick={clearFilters} className="text-[#0A3D8B] text-xs font-bold hover:underline px-2 whitespace-nowrap">Reset</button>
         </div>
 
         {/* Table */}
         <div className="overflow-x-auto min-h-[300px]">
-          {filteredTransactions.length > 0 ? (
+          {processedTransactions.length > 0 ? (
             <table className="w-full text-left min-w-[1000px]">
               <thead>
                 <tr className="border-b border-gray-50">
@@ -98,8 +148,7 @@ const Transactions = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {filteredTransactions.map((tx) => {
-                  // Map the string name back to the imported Lucide icon! Default to ShoppingCart if not found.
+                {processedTransactions.map((tx) => {
                   const MerchIcon = iconMap[tx.icon] || ShoppingCart;
                   const SourceIcon = iconMap[tx.sourceIcon] || CreditCard;
 
@@ -110,26 +159,17 @@ const Transactions = () => {
                         <p className="text-[10px] text-gray-400 font-medium">{tx.time}</p>
                       </td>
                       <td className="px-6 py-5 flex items-center space-x-4">
-                        <div className={`w-10 h-10 rounded-lg ${tx.iconBg} ${tx.iconColor} flex items-center justify-center shrink-0`}>
-                          <MerchIcon className="w-5 h-5" />
-                        </div>
+                        <div className={`w-10 h-10 rounded-lg ${tx.iconBg} ${tx.iconColor} flex items-center justify-center shrink-0`}><MerchIcon className="w-5 h-5" /></div>
                         <div>
                           <p className="text-sm font-bold text-[#0F172A] whitespace-nowrap">{tx.merchant}</p>
                           <p className="text-[10px] text-gray-500 font-medium">{tx.desc}</p>
                         </div>
                       </td>
-                      <td className="px-6 py-5">
-                        <p className="text-[11px] font-medium text-gray-500 flex items-center">
-                          {tx.catMain} <ChevronRight className="w-3 h-3 mx-1 text-gray-300" /> <span className="text-[#0A3D8B] font-bold">{tx.catSub}</span>
-                        </p>
-                      </td>
+                      <td className="px-6 py-5"><p className="text-[11px] font-medium text-gray-500 flex items-center">{tx.catMain} <ChevronRight className="w-3 h-3 mx-1 text-gray-300" /> <span className="text-[#0A3D8B] font-bold">{tx.catSub}</span></p></td>
                       <td className="px-6 py-5">
                         <div className="flex items-center space-x-3">
                           <SourceIcon className="w-5 h-5 text-gray-400 shrink-0" />
-                          <div>
-                            <p className="text-xs font-bold text-[#0F172A]">{tx.source}</p>
-                            <p className="text-[10px] text-gray-500 font-medium">• {tx.sourceLast}</p>
-                          </div>
+                          <div><p className="text-xs font-bold text-[#0F172A]">{tx.source}</p><p className="text-[10px] text-gray-500 font-medium">• {tx.sourceLast}</p></div>
                         </div>
                       </td>
                       <td className="px-6 py-5 text-center">
@@ -142,9 +182,7 @@ const Transactions = () => {
                           {tx.tag2 && <span className={`text-[9px] font-bold px-2 py-1 rounded uppercase tracking-wider ${tx.tag2.color} ${!tx.tag2.active && 'bg-transparent'}`}>{tx.tag2.label}</span>}
                         </div>
                       </td>
-                      {role === 'Admin' && (
-                        <td className="px-6 py-5 text-right"><button className="text-gray-400 hover:text-gray-600"><MoreVertical className="w-5 h-5" /></button></td>
-                      )}
+                      {role === 'Admin' && <td className="px-6 py-5 text-right"><button className="text-gray-400 hover:text-gray-600"><MoreVertical className="w-5 h-5" /></button></td>}
                     </tr>
                   )
                 })}
@@ -154,55 +192,23 @@ const Transactions = () => {
             <div className="flex flex-col items-center justify-center h-48 text-gray-400">
               <Search className="w-10 h-10 mb-3 opacity-20" />
               <p className="text-sm font-semibold">No transactions found.</p>
-              <p className="text-xs">Try adjusting your filters or search term.</p>
             </div>
           )}
         </div>
 
         <div className="p-4 md:p-6 border-t border-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-[11px] font-medium text-gray-500">
-            Showing <span className="font-bold text-[#0F172A]">{filteredTransactions.length}</span> transactions
+            Showing <span className="font-bold text-[#0F172A]">{processedTransactions.length}</span> transactions
           </p>
+          {/* Pagination visual */}
           <div className="flex items-center space-x-1">
-            <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:bg-gray-50 disabled:opacity-50">
-              <ChevronLeft className="w-4 h-4" />
-            </button>
+            <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:bg-gray-50"><ChevronLeft className="w-4 h-4" /></button>
             <button className="w-8 h-8 flex items-center justify-center rounded bg-[#0A3D8B] text-white text-xs font-bold shadow-sm">1</button>
-            <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-[#0F172A] hover:bg-gray-50 text-xs font-bold transition-colors">2</button>
-            <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50">
-              <ChevronRight className="w-4 h-4" />
-            </button>
+            <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50"><ChevronRight className="w-4 h-4" /></button>
           </div>
         </div>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-[#0A3D8B] p-6 rounded-2xl shadow-md text-white relative overflow-hidden">
-          <div className="absolute right-0 bottom-0 opacity-20 transform translate-x-1/4 translate-y-1/4 pointer-events-none"><TrendingUp className="w-48 h-48" strokeWidth={1} /></div>
-          <div className="relative z-10">
-            <p className="text-[9px] font-bold text-blue-200 tracking-widest uppercase mb-2">Monthly Burn</p>
-            <h3 className="text-4xl font-bold mb-4">$4,821.50</h3>
-            <span className="bg-white/20 text-white text-[10px] font-bold px-2.5 py-1 rounded-full">+12% vs last month</span>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-50 flex flex-col justify-between">
-          <p className="text-[9px] font-bold text-gray-400 tracking-widest uppercase mb-6">Essential vs Wants</p>
-          <div className="w-full flex h-3 rounded-full overflow-hidden mb-4"><div className="bg-[#0A3D8B] h-full" style={{ width: '65%' }}></div><div className="bg-[#FFEFEA] h-full" style={{ width: '35%' }}></div></div>
-          <div className="flex justify-between items-end">
-            <div><h3 className="text-2xl font-bold text-[#0F172A]">65%</h3><p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Essential Spending</p></div>
-            <Activity className="w-5 h-5 text-[#0A3D8B]" />
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-50 flex flex-col justify-between">
-          <p className="text-[9px] font-bold text-gray-400 tracking-widest uppercase mb-4">Active Refunds</p>
-          <h3 className="text-2xl font-bold text-[#991B1B] mb-4">$1,102.15</h3>
-          <p className="text-[10px] font-bold text-gray-500">3 Pending Credits</p>
-        </div>
-      </div>
-
-      {/* Render the Modal here */}
-      <AddTransactionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };
