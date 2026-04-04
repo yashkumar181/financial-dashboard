@@ -23,7 +23,7 @@ const Sidebar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobileMen
     <>
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-20 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         ></div>
       )}
