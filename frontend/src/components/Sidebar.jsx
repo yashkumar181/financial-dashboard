@@ -1,7 +1,10 @@
 import React from 'react';
 import { LayoutDashboard, Landmark, ReceiptText, PlaySquare, Target, Settings, Plus, HelpCircle, LineChart } from 'lucide-react';
+import { useFinance } from '../context/FinanceContext';
 
 const Sidebar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobileMenuOpen }) => {
+  const { role } = useFinance();
+
   const getNavClass = (pageName) => {
     const baseClass = "flex items-center px-4 py-3 rounded-lg font-medium text-xs tracking-wide border-l-4 transition-colors w-full text-left ";
     return currentPage === pageName
@@ -42,34 +45,23 @@ const Sidebar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobileMen
           </div>
           
           <nav className="mt-4 space-y-1 px-4">
-            <button onClick={() => handleNavClick('dashboard')} className={getNavClass('dashboard')}>
-              <LayoutDashboard className="w-4 h-4 mr-3 shrink-0" /> DASHBOARD
-            </button>
-            <button onClick={() => handleNavClick('accounts')} className={getNavClass('accounts')}>
-              <Landmark className="w-4 h-4 mr-3 shrink-0" /> ACCOUNTS
-            </button>
-            <button onClick={() => handleNavClick('transactions')} className={getNavClass('transactions')}>
-              <ReceiptText className="w-4 h-4 mr-3 shrink-0" /> TRANSACTIONS
-            </button>
-            <button onClick={() => handleNavClick('subscriptions')} className={getNavClass('subscriptions')}>
-              <PlaySquare className="w-4 h-4 mr-3 shrink-0" /> SUBSCRIPTIONS
-            </button>
-            <button onClick={() => handleNavClick('investments')} className={getNavClass('investments')}>
-              <LineChart className="w-4 h-4 mr-3 shrink-0" /> INVESTMENTS
-            </button>
-            <button onClick={() => handleNavClick('goals')} className={getNavClass('goals')}>
-              <Target className="w-4 h-4 mr-3 shrink-0" /> GOALS
-            </button>
-            <button onClick={() => handleNavClick('settings')} className={getNavClass('settings')}>
-              <Settings className="w-4 h-4 mr-3 shrink-0" /> SETTINGS
-            </button>
+            <button onClick={() => handleNavClick('dashboard')} className={getNavClass('dashboard')}><LayoutDashboard className="w-4 h-4 mr-3 shrink-0" /> DASHBOARD</button>
+            <button onClick={() => handleNavClick('accounts')} className={getNavClass('accounts')}><Landmark className="w-4 h-4 mr-3 shrink-0" /> ACCOUNTS</button>
+            <button onClick={() => handleNavClick('transactions')} className={getNavClass('transactions')}><ReceiptText className="w-4 h-4 mr-3 shrink-0" /> TRANSACTIONS</button>
+            <button onClick={() => handleNavClick('subscriptions')} className={getNavClass('subscriptions')}><PlaySquare className="w-4 h-4 mr-3 shrink-0" /> SUBSCRIPTIONS</button>
+            <button onClick={() => handleNavClick('investments')} className={getNavClass('investments')}><LineChart className="w-4 h-4 mr-3 shrink-0" /> INVESTMENTS</button>
+            <button onClick={() => handleNavClick('goals')} className={getNavClass('goals')}><Target className="w-4 h-4 mr-3 shrink-0" /> GOALS</button>
+            <button onClick={() => handleNavClick('settings')} className={getNavClass('settings')}><Settings className="w-4 h-4 mr-3 shrink-0" /> SETTINGS</button>
           </nav>
           
-          <div className="px-6 mt-8">
-            <button className="w-full bg-[#0A3D8B] hover:bg-[#082f6b] text-white flex items-center justify-center py-3 rounded-lg text-xs font-semibold tracking-wide transition-colors">
-              <Plus className="w-4 h-4 mr-2" /> NEW TRANSACTION
-            </button>
-          </div>
+          {/* RBAC: Only render this button if the user is an Admin */}
+          {role === 'Admin' && (
+            <div className="px-6 mt-8">
+              <button className="w-full bg-[#0A3D8B] hover:bg-[#082f6b] text-white flex items-center justify-center py-3 rounded-lg text-xs font-semibold tracking-wide transition-colors">
+                <Plus className="w-4 h-4 mr-2" /> NEW TRANSACTION
+              </button>
+            </div>
+          )}
         </div>
         
         <div className="p-6">

@@ -1,90 +1,13 @@
 import React from 'react';
 import { 
   Download, Plus, Filter, ChevronDown, Calendar, 
-  MoreVertical, CreditCard, Laptop, Home, ShoppingCart, 
-  Tv, ChevronLeft, ChevronRight, TrendingUp, Activity
+  MoreVertical, ChevronLeft, ChevronRight, TrendingUp, Activity
 } from 'lucide-react';
+import { useFinance } from '../context/FinanceContext';
 
 const Transactions = () => {
-  const transactions = [
-    {
-      id: 1,
-      date: 'Oct 24, 2023',
-      time: '09:42 AM',
-      merchant: 'Apple Store Soho',
-      desc: 'Electronic Purchase',
-      icon: Laptop,
-      iconBg: 'bg-gray-100',
-      iconColor: 'text-gray-800',
-      catMain: 'Leisure',
-      catSub: 'Electronics',
-      source: 'Amex Gold',
-      sourceLast: '1004',
-      sourceIcon: CreditCard,
-      amount: '-$1,299.00',
-      amountType: 'negative',
-      tag1: { label: 'ESSENTIAL', active: true, color: 'bg-[#FFEFEA] text-[#991B1B]' },
-      tag2: { label: 'WANT', active: false, color: 'text-gray-300' }
-    },
-    {
-      id: 2,
-      date: 'Oct 22, 2023',
-      time: '02:15 PM',
-      merchant: 'Airbnb Refund',
-      desc: 'Travel Credit',
-      icon: Home,
-      iconBg: 'bg-red-50',
-      iconColor: 'text-red-500',
-      catMain: 'Travel',
-      catSub: 'Lodging',
-      source: 'Chase Sapphire',
-      sourceLast: '4291',
-      sourceIcon: CreditCard,
-      amount: '+$452.20',
-      amountType: 'positive',
-      subAmount: 'REFUND PROCESSED',
-      tag1: { label: 'NON-ESSENTIAL', active: false, color: 'text-gray-300' },
-      tag2: null
-    },
-    {
-      id: 3,
-      date: 'Oct 21, 2023',
-      time: '11:00 AM',
-      merchant: 'Whole Foods Market',
-      desc: 'Groceries',
-      icon: ShoppingCart,
-      iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-500',
-      catMain: 'Personal',
-      catSub: 'Food',
-      source: 'Amex Gold',
-      sourceLast: '1004',
-      sourceIcon: CreditCard,
-      amount: '-$84.12',
-      amountType: 'negative',
-      tag1: { label: 'ESSENTIAL', active: true, color: 'bg-[#FFEFEA] text-[#991B1B]' },
-      tag2: { label: 'WANT', active: false, color: 'text-gray-300' }
-    },
-    {
-      id: 4,
-      date: 'Oct 20, 2023',
-      time: '08:30 PM',
-      merchant: 'Netflix Subscription',
-      desc: 'Digital Services',
-      icon: Tv,
-      iconBg: 'bg-gray-900',
-      iconColor: 'text-red-600',
-      catMain: 'Leisure',
-      catSub: 'Streaming',
-      source: 'Apple Card',
-      sourceLast: '8820',
-      sourceIcon: CreditCard,
-      amount: '-$19.99',
-      amountType: 'negative',
-      tag1: { label: 'NEED', active: false, color: 'text-gray-300' },
-      tag2: { label: 'NON-ESSENTIAL', active: true, color: 'bg-[#F0F5FF] text-[#0A3D8B]' }
-    }
-  ];
+  // Pulling global data and role from context!
+  const { transactions, role } = useFinance();
 
   return (
     <div className="flex-1 overflow-auto p-4 md:p-10">
@@ -99,10 +22,14 @@ const Transactions = () => {
             <Download className="w-4 h-4 mr-2" />
             Export PDF
           </button>
-          <button className="flex items-center px-4 py-2 bg-[#0A3D8B] text-white rounded-lg text-xs font-semibold hover:bg-[#082f6b] transition-colors shadow-sm">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Transaction
-          </button>
+          
+          {/* RBAC: Hide Add button for Viewers */}
+          {role === 'Admin' && (
+            <button className="flex items-center px-4 py-2 bg-[#0A3D8B] text-white rounded-lg text-xs font-semibold hover:bg-[#082f6b] transition-colors shadow-sm">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Transaction
+            </button>
+          )}
         </div>
       </div>
 
@@ -153,7 +80,7 @@ const Transactions = () => {
                 <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Payment Source</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Amount</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tagging</th>
-                <th className="px-6 py-4"></th>
+                {role === 'Admin' && <th className="px-6 py-4"></th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -211,11 +138,15 @@ const Transactions = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-5 text-right">
-                      <button className="text-gray-400 hover:text-gray-600">
-                        <MoreVertical className="w-5 h-5" />
-                      </button>
-                    </td>
+                    
+                    {/* RBAC: Hide edit menu for Viewers */}
+                    {role === 'Admin' && (
+                      <td className="px-6 py-5 text-right">
+                        <button className="text-gray-400 hover:text-gray-600">
+                          <MoreVertical className="w-5 h-5" />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 )
               })}
@@ -225,7 +156,7 @@ const Transactions = () => {
 
         <div className="p-4 md:p-6 border-t border-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-[11px] font-medium text-gray-500">
-            Showing <span className="font-bold text-[#0F172A]">1-4</span> of 142 transactions
+            Showing <span className="font-bold text-[#0F172A]">{transactions.length}</span> transactions
           </p>
           <div className="flex items-center space-x-1">
             <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:bg-gray-50 disabled:opacity-50">
@@ -234,12 +165,6 @@ const Transactions = () => {
             <button className="w-8 h-8 flex items-center justify-center rounded bg-[#0A3D8B] text-white text-xs font-bold shadow-sm">
               1
             </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-[#0F172A] hover:bg-gray-50 text-xs font-bold transition-colors">
-              2
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-[#0F172A] hover:bg-gray-50 text-xs font-bold transition-colors">
-              3
-            </button>
             <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50">
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -247,8 +172,8 @@ const Transactions = () => {
         </div>
       </div>
 
+      {/* Summary Cards section remains unchanged */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
         <div className="bg-[#0A3D8B] p-6 rounded-2xl shadow-md text-white relative overflow-hidden">
           <div className="absolute right-0 bottom-0 opacity-20 transform translate-x-1/4 translate-y-1/4 pointer-events-none">
             <TrendingUp className="w-48 h-48" strokeWidth={1} />
@@ -278,20 +203,9 @@ const Transactions = () => {
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-50 flex flex-col justify-between">
           <p className="text-[9px] font-bold text-gray-400 tracking-widest uppercase mb-4">Active Refunds</p>
           <h3 className="text-2xl font-bold text-[#991B1B] mb-4">$1,102.15</h3>
-          <div className="flex items-center space-x-3">
-            <div className="flex -space-x-2">
-              <div className="w-6 h-6 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center shrink-0 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1555529733-0e670560f4e1?w=100&auto=format&fit=crop&q=60" alt="Texture" className="w-full h-full object-cover" />
-              </div>
-              <div className="w-6 h-6 rounded-full bg-gray-900 border-2 border-white flex items-center justify-center text-white shrink-0">
-                <Laptop className="w-3 h-3" />
-              </div>
-            </div>
-            <p className="text-[10px] font-bold text-gray-500">3 Pending Credits</p>
-          </div>
+          <p className="text-[10px] font-bold text-gray-500">3 Pending Credits</p>
         </div>
       </div>
-
     </div>
   );
 };
