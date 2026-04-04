@@ -9,25 +9,59 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('monthly');
   const { transactions } = useFinance();
 
+  // New states for our interactive Line Chart
+  const [chartTimeframe, setChartTimeframe] = useState('monthly');
+  const [hoverPoint, setHoverPoint] = useState(null);
+
   const merchants = [
     { id: 1, initial: 'A', name: 'Amazon Web Services', sub: 'ENTERPRISE CLOUD', amount: '$1,842.10', freq: 'Monthly Bill', bg: 'bg-blue-100', text: 'text-blue-600' },
     { id: 2, initial: 'T', name: 'Tesla Supercharger', sub: 'TRANSIT', amount: '$412.50', freq: '12 Transactions', bg: 'bg-indigo-100', text: 'text-indigo-600' },
     { id: 3, initial: 'W', name: 'Whole Foods Market', sub: 'PROVISIONING', amount: '$942.00', freq: '8 Transactions', bg: 'bg-blue-100', text: 'text-blue-600' },
   ];
 
-  // Mock data for the bar chart
-  const velocityData = [
-    { month: 'Jan', income: 85, expense: 60 },
-    { month: 'Feb', income: 90, expense: 55 },
-    { month: 'Mar', income: 75, expense: 70 },
-    { month: 'Apr', income: 95, expense: 65 },
-    { month: 'May', income: 88, expense: 80 },
-    { month: 'Jun', income: 100, expense: 50 },
-  ];
+  // Mock data tailored for different timeframes
+  const chartData = {
+    daily: [
+      { label: 'Mon', income: 450, expense: 320 },
+      { label: 'Tue', income: 420, expense: 410 },
+      { label: 'Wed', income: 510, expense: 290 },
+      { label: 'Thu', income: 480, expense: 380 },
+      { label: 'Fri', income: 600, expense: 520 },
+      { label: 'Sat', income: 300, expense: 650 },
+      { label: 'Sun', income: 250, expense: 400 },
+    ],
+    weekly: [
+      { label: 'Wk 1', income: 4200, expense: 3100 },
+      { label: 'Wk 2', income: 4500, expense: 3800 },
+      { label: 'Wk 3', income: 4100, expense: 2900 },
+      { label: 'Wk 4', income: 5600, expense: 4200 },
+    ],
+    monthly: [
+      { label: 'Jan', income: 18400, expense: 12300 },
+      { label: 'Feb', income: 18400, expense: 14000 },
+      { label: 'Mar', income: 19200, expense: 13100 },
+      { label: 'Apr', income: 18400, expense: 11500 },
+      { label: 'May', income: 21000, expense: 15200 },
+      { label: 'Jun', income: 18400, expense: 10400 },
+    ]
+  };
+
+  // Math logic to render the SVG Chart dynamically
+  const activeChartData = chartData[chartTimeframe];
+  const maxVal = Math.max(...activeChartData.map(d => Math.max(d.income, d.expense))) * 1.1; // 10% padding on top
+  const svgWidth = 600;
+  const svgHeight = 200;
+
+  const xMap = (idx) => (idx / (activeChartData.length - 1)) * svgWidth;
+  const yMap = (val) => svgHeight - (val / maxVal) * svgHeight;
+
+  const pointsIncome = activeChartData.map((d, i) => `${xMap(i)},${yMap(d.income)}`).join(' ');
+  const pointsExpense = activeChartData.map((d, i) => `${xMap(i)},${yMap(d.expense)}`).join(' ');
 
   return (
-    <div className="flex-1 overflow-auto p-4 md:p-10">
+    <div className="flex-1 overflow-auto p-4 md:p-10 relative">
       
+      {/* Top Header */}
       <div className="flex flex-col md:flex-row justify-between md:items-end mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#0F172A] mb-1">Portfolio Synopsis</h1>
@@ -40,6 +74,7 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-50">
           <div className="flex justify-between items-start mb-8">
@@ -80,31 +115,126 @@ const Dashboard = () => {
       </div>
 
       <div className="flex flex-col xl:flex-row gap-6 mb-8">
+        
         <div className="w-full xl:w-2/3 space-y-6">
           
-          {/* NEW BAR CHART */}
+          {/* THE NEW INTERACTIVE SVG LINE CHART */}
           <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-50 flex flex-col">
-            <div className="flex justify-between items-center mb-10">
+            
+            {/* Chart Header & Controls */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
               <div className="flex items-center space-x-4">
                 <h3 className="text-[#0F172A] font-semibold text-base">Fiscal Velocity</h3>
-                <span className="hidden sm:inline text-sm text-gray-400">Income vs Expenses</span>
               </div>
-              <div className="flex items-center space-x-4 text-xs font-semibold text-gray-500">
-                <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-[#0A3D8B] mr-2"></div>INCOME</div>
-                <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-gray-200 mr-2"></div>EXPENSES</div>
+              
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6 w-full sm:w-auto">
+                {/* Timeframe Toggles */}
+                <div className="bg-[#F4F7FA] rounded-lg p-1 flex w-full sm:w-auto">
+                  {['daily', 'weekly', 'monthly'].map(tf => (
+                    <button 
+                      key={tf}
+                      onClick={() => setChartTimeframe(tf)}
+                      className={`flex-1 sm:flex-none px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-md transition-colors ${chartTimeframe === tf ? 'bg-white text-[#0A3D8B] shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                    >
+                      {tf}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex items-center space-x-4 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                  <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-[#0A3D8B] mr-2"></div>INCOME</div>
+                  <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-gray-300 mr-2"></div>EXPENSES</div>
+                </div>
               </div>
             </div>
             
-            <div className="flex-1 flex items-end justify-between px-2 sm:px-8 relative h-48 border-b border-gray-100">
-              {velocityData.map((data, index) => (
-                <div key={index} className="flex flex-col items-center group w-10 sm:w-16">
-                  <div className="flex space-x-1 sm:space-x-1.5 items-end h-40 w-full justify-center">
-                    <div className="w-3 sm:w-4 bg-[#0A3D8B] rounded-t-sm transition-all duration-300 group-hover:opacity-80" style={{ height: `${data.income}%` }}></div>
-                    <div className="w-3 sm:w-4 bg-gray-200 rounded-t-sm transition-all duration-300 group-hover:opacity-80" style={{ height: `${data.expense}%` }}></div>
+            {/* Chart Canvas Area */}
+            <div 
+              className="flex-1 w-full relative min-h-[220px]"
+              onMouseLeave={() => setHoverPoint(null)}
+            >
+              <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-full overflow-visible" preserveAspectRatio="none">
+                
+                {/* Background Grid Lines */}
+                {[0, 1, 2, 3].map(i => (
+                  <line key={i} x1="0" y1={(i * svgHeight) / 3} x2={svgWidth} y2={(i * svgHeight) / 3} stroke="#F3F4F6" strokeWidth="1" />
+                ))}
+                
+                {/* Connecting Lines */}
+                <polyline points={pointsIncome} fill="none" stroke="#0A3D8B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                <polyline points={pointsExpense} fill="none" stroke="#D1D5DB" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                
+                {/* Data Point Circles */}
+                {activeChartData.map((d, i) => (
+                  <g key={i}>
+                    <circle cx={xMap(i)} cy={yMap(d.income)} r="4" fill="#0A3D8B" className="transition-all duration-300" />
+                    <circle cx={xMap(i)} cy={yMap(d.expense)} r="4" fill="#9CA3AF" className="transition-all duration-300" />
+                  </g>
+                ))}
+                
+                {/* Invisible Hover Interaction Zones */}
+                {activeChartData.map((d, i) => {
+                  const widthPerZone = svgWidth / Math.max(1, activeChartData.length - 1);
+                  return (
+                    <rect
+                      key={i}
+                      x={xMap(i) - widthPerZone / 2}
+                      y="0"
+                      width={widthPerZone}
+                      height={svgHeight}
+                      fill="transparent"
+                      className="cursor-crosshair"
+                      onMouseEnter={() => setHoverPoint({ 
+                        index: i, 
+                        ...d, 
+                        x: xMap(i), 
+                        yInc: yMap(d.income), 
+                        yExp: yMap(d.expense) 
+                      })}
+                    />
+                  );
+                })}
+                
+                {/* Active Hover Visuals (Vertical Line & Highlighted Points) */}
+                {hoverPoint && (
+                  <>
+                    <line x1={hoverPoint.x} y1="0" x2={hoverPoint.x} y2={svgHeight} stroke="#0A3D8B" strokeWidth="1" strokeDasharray="4 4" opacity="0.4" pointerEvents="none" />
+                    <circle cx={hoverPoint.x} cy={hoverPoint.yInc} r="6" fill="#fff" stroke="#0A3D8B" strokeWidth="3" pointerEvents="none" />
+                    <circle cx={hoverPoint.x} cy={hoverPoint.yExp} r="6" fill="#fff" stroke="#9CA3AF" strokeWidth="3" pointerEvents="none" />
+                  </>
+                )}
+              </svg>
+
+              {/* X-Axis Labels */}
+              <div className="absolute left-0 right-0 bottom-[-30px] flex justify-between px-[2%]">
+                {activeChartData.map((d, i) => (
+                  <span key={i} className="text-[10px] font-bold text-gray-400 uppercase tracking-widest transform -translate-x-1/2" style={{ position: 'absolute', left: `${(xMap(i) / svgWidth) * 100}%` }}>
+                    {d.label}
+                  </span>
+                ))}
+              </div>
+
+              {/* Dynamic HTML Tooltip */}
+              {hoverPoint && (
+                <div 
+                  className="absolute bg-[#0F172A] text-white p-3 rounded-xl shadow-2xl text-xs z-10 pointer-events-none transition-all duration-100 ease-out min-w-[120px]"
+                  style={{ 
+                    left: `${(hoverPoint.x / svgWidth) * 100}%`, 
+                    top: `${Math.min(hoverPoint.yInc, hoverPoint.yExp) - 15}px`,
+                    transform: `translate(${hoverPoint.index === 0 ? '0%' : hoverPoint.index === activeChartData.length - 1 ? '-100%' : '-50%'}, -100%)`
+                  }}
+                >
+                  <p className="font-bold mb-2 border-b border-gray-700 pb-2 text-[10px] uppercase tracking-widest text-gray-300">{hoverPoint.label}</p>
+                  <div className="flex items-center justify-between space-x-4 mb-2">
+                    <span className="flex items-center text-blue-300"><div className="w-1.5 h-1.5 rounded-full bg-blue-400 mr-2"></div>Income</span>
+                    <span className="font-bold text-sm">${hoverPoint.income.toLocaleString()}</span>
                   </div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase mt-4">{data.month}</span>
+                  <div className="flex items-center justify-between space-x-4">
+                    <span className="flex items-center text-gray-400"><div className="w-1.5 h-1.5 rounded-full bg-gray-400 mr-2"></div>Expense</span>
+                    <span className="font-bold text-sm">${hoverPoint.expense.toLocaleString()}</span>
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
