@@ -1,13 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Download, Plus, Filter, ChevronDown, Calendar, 
-  MoreVertical, ChevronLeft, ChevronRight, TrendingUp, Activity
+  MoreVertical, ChevronLeft, ChevronRight, TrendingUp, Activity, Search
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 
 const Transactions = () => {
-  // Pulling global data and role from context!
   const { transactions, role } = useFinance();
+  
+  // 1. State for our filters
+  const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('All Categories');
+  const [accountFilter, setAccountFilter] = useState('All Accounts');
+
+  // 2. The filtering logic
+  const filteredTransactions = transactions.filter((tx) => {
+    const matchesSearch = 
+      tx.merchant.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      tx.desc.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesCategory = categoryFilter === 'All Categories' || tx.catMain === categoryFilter;
+    const matchesAccount = accountFilter === 'All Accounts' || tx.source === accountFilter;
+
+    return matchesSearch && matchesCategory && matchesAccount;
+  });
+
+  // 3. Helper to clear filters
+  const clearFilters = () => {
+    setSearchTerm('');
+    setCategoryFilter('All Categories');
+    setAccountFilter('All Accounts');
+  };
 
   return (
     <div className="flex-1 overflow-auto p-4 md:p-10">
@@ -23,7 +46,6 @@ const Transactions = () => {
             Export PDF
           </button>
           
-          {/* RBAC: Hide Add button for Viewers */}
           {role === 'Admin' && (
             <button className="flex items-center px-4 py-2 bg-[#0A3D8B] text-white rounded-lg text-xs font-semibold hover:bg-[#082f6b] transition-colors shadow-sm">
               <Plus className="w-4 h-4 mr-2" />
@@ -35,136 +57,170 @@ const Transactions = () => {
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-50 overflow-hidden mb-8">
         
+        {/* FILTER BAR */}
         <div className="p-4 md:p-6 flex flex-col xl:flex-row gap-4 border-b border-gray-50 items-start xl:items-center">
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
+            
+            {/* Search Input */}
+            <div className="relative md:col-span-2">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input 
+                type="text" 
+                placeholder="Search merchants or descriptions..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg focus:outline-none focus:border-[#0A3D8B] shadow-sm" 
+              />
+            </div>
+
+            {/* Category Filter */}
             <div className="relative">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                 <Filter className="w-4 h-4 text-gray-400" />
               </div>
-              <select className="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg appearance-none focus:outline-none focus:border-[#0A3D8B] shadow-sm">
+              <select 
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg appearance-none focus:outline-none focus:border-[#0A3D8B] shadow-sm"
+              >
                 <option>All Categories</option>
+                <option>Leisure</option>
+                <option>Travel</option>
+                <option>Personal</option>
               </select>
               <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                 <ChevronDown className="w-4 h-4 text-gray-400" />
               </div>
             </div>
             
+            {/* Account Filter */}
             <div className="relative">
-              <select className="w-full pl-4 pr-10 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg appearance-none focus:outline-none focus:border-[#0A3D8B] shadow-sm">
+              <select 
+                value={accountFilter}
+                onChange={(e) => setAccountFilter(e.target.value)}
+                className="w-full pl-4 pr-10 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg appearance-none focus:outline-none focus:border-[#0A3D8B] shadow-sm"
+              >
                 <option>All Accounts</option>
+                <option>Amex Gold</option>
+                <option>Chase Sapphire</option>
+                <option>Apple Card</option>
               </select>
               <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                 <ChevronDown className="w-4 h-4 text-gray-400" />
               </div>
             </div>
-
-            <div className="relative">
-              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <Calendar className="w-4 h-4 text-gray-400" />
-              </div>
-              <input type="text" value="Oct 01 - Oct 31, 2023" readOnly className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 text-[#0F172A] text-xs font-semibold rounded-lg focus:outline-none focus:border-[#0A3D8B] shadow-sm cursor-pointer" />
-            </div>
           </div>
-          <button className="text-[#0A3D8B] text-xs font-bold hover:underline px-2 whitespace-nowrap">
+
+          <button 
+            onClick={clearFilters}
+            className="text-[#0A3D8B] text-xs font-bold hover:underline px-2 whitespace-nowrap"
+          >
             Clear Filters
           </button>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left min-w-[1000px]">
-            <thead>
-              <tr className="border-b border-gray-50">
-                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Date</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Merchant</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Payment Source</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Amount</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tagging</th>
-                {role === 'Admin' && <th className="px-6 py-4"></th>}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {transactions.map((tx) => {
-                const MerchIcon = tx.icon;
-                const SourceIcon = tx.sourceIcon;
-                return (
-                  <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-5">
-                      <p className="text-xs font-bold text-[#0F172A] whitespace-nowrap">{tx.date}</p>
-                      <p className="text-[10px] text-gray-400 font-medium">{tx.time}</p>
-                    </td>
-                    <td className="px-6 py-5 flex items-center space-x-4">
-                      <div className={`w-10 h-10 rounded-lg ${tx.iconBg} ${tx.iconColor} flex items-center justify-center shrink-0`}>
-                        <MerchIcon className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-[#0F172A] whitespace-nowrap">{tx.merchant}</p>
-                        <p className="text-[10px] text-gray-500 font-medium">{tx.desc}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <p className="text-[11px] font-medium text-gray-500 flex items-center">
-                        {tx.catMain} <ChevronRight className="w-3 h-3 mx-1 text-gray-300" /> <span className="text-[#0A3D8B] font-bold">{tx.catSub}</span>
-                      </p>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center space-x-3">
-                        <SourceIcon className="w-5 h-5 text-gray-400 shrink-0" />
-                        <div>
-                          <p className="text-xs font-bold text-[#0F172A]">{tx.source}</p>
-                          <p className="text-[10px] text-gray-500 font-medium">• {tx.sourceLast}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 text-center">
-                      <p className={`text-sm font-bold ${tx.amountType === 'positive' ? 'text-[#991B1B]' : 'text-[#0F172A]'}`}>
-                        {tx.amount}
-                      </p>
-                      {tx.subAmount && (
-                        <p className="text-[8px] font-bold text-[#991B1B] uppercase tracking-widest mt-1">{tx.subAmount}</p>
-                      )}
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center space-x-2">
-                        {tx.tag1 && (
-                          <span className={`text-[9px] font-bold px-2 py-1 rounded uppercase tracking-wider ${tx.tag1.color} ${!tx.tag1.active && 'bg-transparent'}`}>
-                            {tx.tag1.label}
-                          </span>
-                        )}
-                        {tx.tag2 && (
-                          <span className={`text-[9px] font-bold px-2 py-1 rounded uppercase tracking-wider ${tx.tag2.color} ${!tx.tag2.active && 'bg-transparent'}`}>
-                            {tx.tag2.label}
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    
-                    {/* RBAC: Hide edit menu for Viewers */}
-                    {role === 'Admin' && (
-                      <td className="px-6 py-5 text-right">
-                        <button className="text-gray-400 hover:text-gray-600">
-                          <MoreVertical className="w-5 h-5" />
-                        </button>
+        {/* TRANSACTIONS TABLE */}
+        <div className="overflow-x-auto min-h-[300px]">
+          {filteredTransactions.length > 0 ? (
+            <table className="w-full text-left min-w-[1000px]">
+              <thead>
+                <tr className="border-b border-gray-50">
+                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Date</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Merchant</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Payment Source</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Amount</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tagging</th>
+                  {role === 'Admin' && <th className="px-6 py-4"></th>}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {filteredTransactions.map((tx) => {
+                  const MerchIcon = tx.icon;
+                  const SourceIcon = tx.sourceIcon;
+                  return (
+                    <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-5">
+                        <p className="text-xs font-bold text-[#0F172A] whitespace-nowrap">{tx.date}</p>
+                        <p className="text-[10px] text-gray-400 font-medium">{tx.time}</p>
                       </td>
-                    )}
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                      <td className="px-6 py-5 flex items-center space-x-4">
+                        <div className={`w-10 h-10 rounded-lg ${tx.iconBg} ${tx.iconColor} flex items-center justify-center shrink-0`}>
+                          <MerchIcon className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-[#0F172A] whitespace-nowrap">{tx.merchant}</p>
+                          <p className="text-[10px] text-gray-500 font-medium">{tx.desc}</p>
+                        </div>
+                      </td>
+                      <td className="px-6 py-5">
+                        <p className="text-[11px] font-medium text-gray-500 flex items-center">
+                          {tx.catMain} <ChevronRight className="w-3 h-3 mx-1 text-gray-300" /> <span className="text-[#0A3D8B] font-bold">{tx.catSub}</span>
+                        </p>
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="flex items-center space-x-3">
+                          <SourceIcon className="w-5 h-5 text-gray-400 shrink-0" />
+                          <div>
+                            <p className="text-xs font-bold text-[#0F172A]">{tx.source}</p>
+                            <p className="text-[10px] text-gray-500 font-medium">• {tx.sourceLast}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-5 text-center">
+                        <p className={`text-sm font-bold ${tx.amountType === 'positive' ? 'text-[#991B1B]' : 'text-[#0F172A]'}`}>
+                          {tx.amount}
+                        </p>
+                        {tx.subAmount && (
+                          <p className="text-[8px] font-bold text-[#991B1B] uppercase tracking-widest mt-1">{tx.subAmount}</p>
+                        )}
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="flex items-center space-x-2">
+                          {tx.tag1 && (
+                            <span className={`text-[9px] font-bold px-2 py-1 rounded uppercase tracking-wider ${tx.tag1.color} ${!tx.tag1.active && 'bg-transparent'}`}>
+                              {tx.tag1.label}
+                            </span>
+                          )}
+                          {tx.tag2 && (
+                            <span className={`text-[9px] font-bold px-2 py-1 rounded uppercase tracking-wider ${tx.tag2.color} ${!tx.tag2.active && 'bg-transparent'}`}>
+                              {tx.tag2.label}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      
+                      {role === 'Admin' && (
+                        <td className="px-6 py-5 text-right">
+                          <button className="text-gray-400 hover:text-gray-600">
+                            <MoreVertical className="w-5 h-5" />
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-48 text-gray-400">
+              <Search className="w-10 h-10 mb-3 opacity-20" />
+              <p className="text-sm font-semibold">No transactions found.</p>
+              <p className="text-xs">Try adjusting your filters or search term.</p>
+            </div>
+          )}
         </div>
 
         <div className="p-4 md:p-6 border-t border-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-[11px] font-medium text-gray-500">
-            Showing <span className="font-bold text-[#0F172A]">{transactions.length}</span> transactions
+            Showing <span className="font-bold text-[#0F172A]">{filteredTransactions.length}</span> transactions
           </p>
           <div className="flex items-center space-x-1">
             <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:bg-gray-50 disabled:opacity-50">
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded bg-[#0A3D8B] text-white text-xs font-bold shadow-sm">
-              1
-            </button>
+            <button className="w-8 h-8 flex items-center justify-center rounded bg-[#0A3D8B] text-white text-xs font-bold shadow-sm">1</button>
+            <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-[#0F172A] hover:bg-gray-50 text-xs font-bold transition-colors">2</button>
             <button className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-gray-50">
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -172,7 +228,7 @@ const Transactions = () => {
         </div>
       </div>
 
-      {/* Summary Cards section remains unchanged */}
+      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-[#0A3D8B] p-6 rounded-2xl shadow-md text-white relative overflow-hidden">
           <div className="absolute right-0 bottom-0 opacity-20 transform translate-x-1/4 translate-y-1/4 pointer-events-none">
