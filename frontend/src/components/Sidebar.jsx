@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LayoutDashboard, Landmark, ReceiptText, PlaySquare, Target, Settings, Plus, HelpCircle, LineChart } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
+import AddTransactionModal from './AddTransactionModal';
 
 const Sidebar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const { role } = useFinance();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getNavClass = (pageName) => {
     const baseClass = "flex items-center px-4 py-3 rounded-lg font-medium text-xs tracking-wide border-l-4 transition-colors w-full text-left ";
@@ -57,7 +59,10 @@ const Sidebar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobileMen
           {/* RBAC: Only render this button if the user is an Admin */}
           {role === 'Admin' && (
             <div className="px-6 mt-8">
-              <button className="w-full bg-[#0A3D8B] hover:bg-[#082f6b] text-white flex items-center justify-center py-3 rounded-lg text-xs font-semibold tracking-wide transition-colors">
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="w-full bg-[#0A3D8B] hover:bg-[#082f6b] text-white flex items-center justify-center py-3 rounded-lg text-xs font-semibold tracking-wide transition-colors"
+              >
                 <Plus className="w-4 h-4 mr-2" /> NEW TRANSACTION
               </button>
             </div>
@@ -70,6 +75,9 @@ const Sidebar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobileMen
           </button>
         </div>
       </div>
+
+      {/* Render the Modal */}
+      <AddTransactionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 };

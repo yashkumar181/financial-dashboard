@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { 
   Wallet, CreditCard, PiggyBank, TrendingUp, Home, 
-  GraduationCap, Search, Filter, Plus
+  GraduationCap, Search, Filter, Plus, Activity,
+  Laptop, ShoppingCart, Tv // Imported for the recent transactions table
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
+
+// Map string names back to actual React components
+const iconMap = { Laptop, Home, ShoppingCart, Tv, CreditCard };
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('monthly');
   const { transactions } = useFinance();
 
-  // New states for our interactive Line Chart
+  // States for our interactive Line Chart
   const [chartTimeframe, setChartTimeframe] = useState('monthly');
   const [hoverPoint, setHoverPoint] = useState(null);
 
@@ -347,7 +351,9 @@ const Dashboard = () => {
             </thead>
             <tbody className="divide-y divide-gray-50">
               {transactions.slice(0, 3).map((tx) => {
-                const Icon = tx.icon;
+                // Map the string to the correct icon component
+                const Icon = iconMap[tx.icon] || ShoppingCart;
+                
                 return (
                   <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 text-xs text-gray-500 font-medium">{tx.date}</td>
