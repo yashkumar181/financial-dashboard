@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AddTransactionModal from '../components/AddTransactionModal';
 import { 
   Download, Plus, ChevronDown, MoreVertical, 
   ChevronLeft, ChevronRight, Search, Laptop, Home, 
@@ -170,6 +171,7 @@ const Transactions = () => {
           </div>
         </div>
       </div>
+      <AddTransactionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

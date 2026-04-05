@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Wallet, CreditCard, PiggyBank, TrendingUp, Home, GraduationCap, Plus, Laptop, ShoppingCart, Tv } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
+import LineChart from '../components/charts/LineChart';
+import { merchantsData, chartDataMap } from '../data/mockData';
 
 const iconMap = { Laptop, Home, ShoppingCart, Tv, CreditCard };
 
@@ -8,28 +10,6 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('monthly');
   const { transactions } = useFinance();
   const [chartTimeframe, setChartTimeframe] = useState('monthly');
-  const [hoverPoint, setHoverPoint] = useState(null);
-
-  const merchants = [
-    { id: 1, initial: 'A', name: 'Amazon Web Services', sub: 'ENTERPRISE CLOUD', amount: '$1,842.10', freq: 'Monthly Bill', bg: 'bg-blue-100 dark:bg-gray-800', text: 'text-blue-600 dark:text-gray-300' },
-    { id: 2, initial: 'T', name: 'Tesla Supercharger', sub: 'TRANSIT', amount: '$412.50', freq: '12 Transactions', bg: 'bg-indigo-100 dark:bg-gray-800', text: 'text-indigo-600 dark:text-gray-300' },
-    { id: 3, initial: 'W', name: 'Whole Foods Market', sub: 'PROVISIONING', amount: '$942.00', freq: '8 Transactions', bg: 'bg-blue-100 dark:bg-gray-800', text: 'text-blue-600 dark:text-gray-300' },
-  ];
-
-  const chartData = {
-    daily: [{ label: 'Mon', income: 450, expense: 320 }, { label: 'Tue', income: 420, expense: 410 }, { label: 'Wed', income: 510, expense: 290 }, { label: 'Thu', income: 480, expense: 380 }, { label: 'Fri', income: 600, expense: 520 }, { label: 'Sat', income: 300, expense: 650 }, { label: 'Sun', income: 250, expense: 400 }],
-    weekly: [{ label: 'Wk 1', income: 4200, expense: 3100 }, { label: 'Wk 2', income: 4500, expense: 3800 }, { label: 'Wk 3', income: 4100, expense: 2900 }, { label: 'Wk 4', income: 5600, expense: 4200 }],
-    monthly: [{ label: 'Jan', income: 18400, expense: 12300 }, { label: 'Feb', income: 18400, expense: 14000 }, { label: 'Mar', income: 19200, expense: 13100 }, { label: 'Apr', income: 18400, expense: 11500 }, { label: 'May', income: 21000, expense: 15200 }, { label: 'Jun', income: 18400, expense: 10400 }]
-  };
-
-  const activeChartData = chartData[chartTimeframe];
-  const maxVal = Math.max(...activeChartData.map(d => Math.max(d.income, d.expense))) * 1.1; 
-  const svgWidth = 600;
-  const svgHeight = 200;
-  const xMap = (idx) => (idx / (activeChartData.length - 1)) * svgWidth;
-  const yMap = (val) => svgHeight - (val / maxVal) * svgHeight;
-  const pointsIncome = activeChartData.map((d, i) => `${xMap(i)},${yMap(d.income)}`).join(' ');
-  const pointsExpense = activeChartData.map((d, i) => `${xMap(i)},${yMap(d.expense)}`).join(' ');
 
   return (
     <div className="p-4 md:p-10 relative">
@@ -102,42 +82,8 @@ const Dashboard = () => {
               </div>
             </div>
             
-            <div className="flex-1 w-full relative min-h-[220px]" onMouseLeave={() => setHoverPoint(null)}>
-              <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-full overflow-visible" preserveAspectRatio="none">
-                {[0, 1, 2, 3].map(i => <line key={i} x1="0" y1={(i * svgHeight) / 3} x2={svgWidth} y2={(i * svgHeight) / 3} stroke="currentColor" className="text-gray-100 dark:text-white/5" strokeWidth="1" />)}
-                <polyline points={pointsIncome} fill="none" stroke="currentColor" className="text-[#0A3D8B] dark:text-gray-400" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                <polyline points={pointsExpense} fill="none" stroke="currentColor" className="text-gray-300 dark:text-gray-600" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                {activeChartData.map((d, i) => (
-                  <g key={i}>
-                    <circle cx={xMap(i)} cy={yMap(d.income)} r="4" fill="currentColor" className="text-[#0A3D8B] dark:text-gray-400" />
-                    <circle cx={xMap(i)} cy={yMap(d.expense)} r="4" fill="currentColor" className="text-gray-400 dark:text-gray-600" />
-                  </g>
-                ))}
-                {activeChartData.map((d, i) => {
-                  const widthPerZone = svgWidth / Math.max(1, activeChartData.length - 1);
-                  return <rect key={i} x={xMap(i) - widthPerZone / 2} y="0" width={widthPerZone} height={svgHeight} fill="transparent" className="cursor-crosshair" onMouseEnter={() => setHoverPoint({ index: i, ...d, x: xMap(i), yInc: yMap(d.income), yExp: yMap(d.expense) })} />;
-                })}
-                {hoverPoint && (
-                  <>
-                    <line x1={hoverPoint.x} y1="0" x2={hoverPoint.x} y2={svgHeight} stroke="currentColor" className="text-[#0A3D8B] dark:text-gray-500" strokeWidth="1" strokeDasharray="4 4" opacity="0.4" pointerEvents="none" />
-                    <circle cx={hoverPoint.x} cy={hoverPoint.yInc} r="6" fill="currentColor" className="text-white dark:text-[#1E1E1E] stroke-[#0A3D8B] dark:stroke-gray-400" strokeWidth="3" pointerEvents="none" />
-                    <circle cx={hoverPoint.x} cy={hoverPoint.yExp} r="6" fill="currentColor" className="text-white dark:text-[#1E1E1E] stroke-gray-400 dark:stroke-gray-600" strokeWidth="3" pointerEvents="none" />
-                  </>
-                )}
-              </svg>
-              <div className="absolute left-0 right-0 bottom-[-30px] flex justify-between px-[2%]">
-                {activeChartData.map((d, i) => (
-                  <span key={i} className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest transform -translate-x-1/2" style={{ position: 'absolute', left: `${(xMap(i) / svgWidth) * 100}%` }}>{d.label}</span>
-                ))}
-              </div>
-              {hoverPoint && (
-                <div className="absolute bg-[#0F172A] dark:bg-[#121212] text-white p-3 rounded-xl shadow-2xl text-xs z-10 pointer-events-none transition-all duration-100 ease-out min-w-[120px] border dark:border-white/10" style={{ left: `${(hoverPoint.x / svgWidth) * 100}%`, top: `${Math.min(hoverPoint.yInc, hoverPoint.yExp) - 15}px`, transform: `translate(${hoverPoint.index === 0 ? '0%' : hoverPoint.index === activeChartData.length - 1 ? '-100%' : '-50%'}, -100%)` }}>
-                  <p className="font-bold mb-2 border-b border-gray-700 dark:border-gray-800 pb-2 text-[10px] uppercase tracking-widest text-gray-300 dark:text-gray-400">{hoverPoint.label}</p>
-                  <div className="flex items-center justify-between space-x-4 mb-2"><span className="flex items-center text-blue-300 dark:text-gray-400"><div className="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-gray-400 mr-2"></div>Income</span><span className="font-bold text-sm">${hoverPoint.income.toLocaleString()}</span></div>
-                  <div className="flex items-center justify-between space-x-4"><span className="flex items-center text-gray-400"><div className="w-1.5 h-1.5 rounded-full bg-gray-400 mr-2"></div>Expense</span><span className="font-bold text-sm">${hoverPoint.expense.toLocaleString()}</span></div>
-                </div>
-              )}
-            </div>
+            <LineChart data={chartDataMap[chartTimeframe]} />
+
           </div>
 
           <div className="bg-white dark:bg-[#1E1E1E] p-6 md:p-8 rounded-2xl shadow-sm border border-gray-50 dark:border-white/5">
@@ -210,7 +156,7 @@ const Dashboard = () => {
           <div className="bg-white dark:bg-[#1E1E1E] p-6 rounded-2xl shadow-sm border border-gray-50 dark:border-white/5">
             <h3 className="text-[#0F172A] dark:text-gray-200 font-semibold text-base mb-6">Primary Merchants</h3>
             <div className="space-y-6">
-              {merchants.map((merchant) => (
+              {merchantsData.map((merchant) => (
                 <div key={merchant.id} className="flex justify-between items-center">
                   <div className="flex items-center space-x-4">
                     <div className={`w-10 h-10 rounded-full ${merchant.bg} ${merchant.text} flex items-center justify-center font-bold text-sm shrink-0`}>{merchant.initial}</div>

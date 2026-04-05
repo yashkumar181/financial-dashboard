@@ -1,17 +1,11 @@
 import React from 'react';
 import { 
   TrendingUp, Wallet, Activity, PieChart, BarChart2, 
-  ChevronDown, Filter, History, Lightbulb, Building2, 
-  BarChart3, Landmark, MoreHorizontal
+  ChevronDown, Filter, History, Lightbulb, MoreHorizontal
 } from 'lucide-react';
+import { investmentsData } from '../data/mockData';
 
 const Investments = () => {
-  const holdings = [
-    { id: 1, name: 'Nvidia Corp (NVDA)', type: 'EQUITY • 42 UNITS', icon: BarChart3, iconBg: 'bg-blue-100 dark:bg-gray-800', iconColor: 'text-blue-700 dark:text-gray-300', value: '$48,421.10', dayChange: '+4.2%', dayChangeType: 'positive', totalGain: '+$18,200.00', roi: '60.2%', gainType: 'positive', goal: 'WEALTH GEN' },
-    { id: 2, name: 'Blue Ridge REIT', type: 'REAL ESTATE • MONTHLY DIV', icon: Building2, iconBg: 'bg-orange-100 dark:bg-gray-800', iconColor: 'text-orange-700 dark:text-gray-300', value: '$125,000.00', dayChange: '0.0%', dayChangeType: 'neutral', totalGain: '+$12,400.00', roi: '11.0%', gainType: 'positive', goal: 'RETIREMENT' },
-    { id: 3, name: 'Vanguard Global Tech Fund', type: 'MUTUAL FUND • GROWTH', icon: Landmark, iconBg: 'bg-gray-100 dark:bg-[#121212]', iconColor: 'text-gray-700 dark:text-gray-400', value: '$64,120.30', dayChange: '-0.8%', dayChangeType: 'negative', totalGain: '+$8,920.00', roi: '16.2%', gainType: 'positive', goal: 'COLLEGE' }
-  ];
-
   return (
     <div className="flex-1 overflow-auto p-4 md:p-10">
       
@@ -179,7 +173,7 @@ const Investments = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 dark:divide-white/5">
-              {holdings.map((item) => {
+              {investmentsData.map((item) => {
                 const Icon = item.icon;
                 return (
                   <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">

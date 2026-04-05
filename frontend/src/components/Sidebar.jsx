@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Landmark, ReceiptText, PlaySquare, Target, Settings, Plus, HelpCircle, LineChart } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
+import AddTransactionModal from './AddTransactionModal'; // 1. IMPORT ADDED
 
 const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const { role } = useFinance();
+  const [isModalOpen, setIsModalOpen] = useState(false); // 2. STATE ADDED
 
   const navLinkClass = ({ isActive }) => {
     const baseClass = "flex items-center px-4 py-3 rounded-lg font-medium text-xs tracking-wide border-l-4 transition-all duration-200 w-full text-left ";
@@ -50,7 +52,8 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
           
           {role === 'Admin' && (
             <div className="px-6 mt-8">
-              <button className="w-full bg-[#0A3D8B] dark:bg-gray-700 hover:bg-[#082f6b] dark:hover:bg-gray-600 text-white flex items-center justify-center py-3 rounded-lg text-xs font-semibold tracking-wide transition-colors shadow-md">
+              {/* 3. onClick HANDLER ADDED */}
+              <button onClick={() => setIsModalOpen(true)} className="w-full bg-[#0A3D8B] dark:bg-gray-700 hover:bg-[#082f6b] dark:hover:bg-gray-600 text-white flex items-center justify-center py-3 rounded-lg text-xs font-semibold tracking-wide transition-colors shadow-md">
                 <Plus className="w-4 h-4 mr-2" /> NEW TRANSACTION
               </button>
             </div>
@@ -63,6 +66,9 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
           </button>
         </div>
       </div>
+
+      {/* 4. MODAL COMPONENT RENDERED HERE */}
+      <AddTransactionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 };

@@ -1,17 +1,10 @@
 import React from 'react';
 import { 
-  TrendingUp, AlertTriangle, History, Download, Plus, 
-  Heart, CheckCircle2, Frown, PiggyBank, Calendar
+  TrendingUp, AlertTriangle, History, Download, Plus, PiggyBank, Calendar
 } from 'lucide-react';
+import { subscriptionsData } from '../data/mockData';
 
 const Subscriptions = () => {
-  const subs = [
-    { id: 1, name: 'Netflix', plan: 'Premium 4K Plan', initial: 'N', bg: 'bg-black dark:bg-[#121212]', text: 'text-white', cycle: 'MONTHLY', next: 'OCT 14', rating: 'Loved', ratingIcon: Heart, ratingColor: 'text-red-600 dark:text-red-400', ratingBg: 'bg-red-50 dark:bg-red-900/20', cost: '$19.99', subCost: '' },
-    { id: 2, name: 'Spotify', plan: 'Family Plan', initial: 'S', bg: 'bg-green-500 dark:bg-green-600', text: 'text-white', cycle: 'MONTHLY', next: 'OCT 22', rating: 'Loved', ratingIcon: Heart, ratingColor: 'text-red-600 dark:text-red-400', ratingBg: 'bg-red-50 dark:bg-red-900/20', cost: '$16.99', subCost: '' },
-    { id: 3, name: 'Google One', plan: '2TB Storage', initial: 'G', bg: 'bg-blue-100 dark:bg-gray-800', text: 'text-blue-600 dark:text-gray-300', cycle: 'ANNUAL', next: 'MAR 2024', rating: 'Constant', ratingIcon: CheckCircle2, ratingColor: 'text-[#0A3D8B] dark:text-blue-400', ratingBg: 'bg-blue-50 dark:bg-blue-900/20', cost: '$9.99', subCost: '$99.99/yr' },
-    { id: 4, name: 'Masterclass', plan: 'All-Access Pass', initial: 'M', bg: 'bg-black dark:bg-[#121212]', text: 'text-white', cycle: 'ANNUAL', next: 'NOV 02', rating: 'Rarely Used', ratingIcon: Frown, ratingColor: 'text-red-700 dark:text-orange-400', ratingBg: 'bg-red-100 dark:bg-orange-900/20', cost: '$15.00', subCost: '$180.00/yr' },
-  ];
-
   return (
     <div className="flex-1 overflow-auto p-4 md:p-10">
       
@@ -91,7 +84,7 @@ const Subscriptions = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 dark:divide-white/5">
-              {subs.map((sub) => {
+              {subscriptionsData.map((sub) => {
                 const Icon = sub.ratingIcon;
                 return (
                   <tr key={sub.id} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
