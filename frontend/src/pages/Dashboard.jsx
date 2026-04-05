@@ -67,7 +67,7 @@ const Dashboard = () => {
       <div className="flex flex-col xl:flex-row gap-6 mb-8">
         <div className="w-full xl:w-2/3 space-y-6">
           <div className="bg-white dark:bg-[#1E1E1E] p-6 md:p-8 rounded-2xl shadow-sm border border-gray-50 dark:border-white/5 flex flex-col">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
+<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
               <h3 className="text-[#0F172A] dark:text-gray-200 font-semibold text-base">Fiscal Velocity</h3>
               <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6 w-full sm:w-auto">
                 <div className="bg-[#F4F7FA] dark:bg-[#121212] rounded-lg p-1 flex w-full sm:w-auto border dark:border-white/5">
@@ -75,9 +75,10 @@ const Dashboard = () => {
                     <button key={tf} onClick={() => setChartTimeframe(tf)} className={`flex-1 sm:flex-none px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-md transition-colors ${chartTimeframe === tf ? 'bg-white dark:bg-[#2A2A2A] text-[#0A3D8B] dark:text-gray-200 shadow-sm' : 'text-gray-400 dark:text-gray-500'}`}>{tf}</button>
                   ))}
                 </div>
+                {/* --- LEGEND UPDATED HERE --- */}
                 <div className="flex items-center space-x-4 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-[#0A3D8B] dark:bg-gray-400 mr-2"></div>INCOME</div>
-                  <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 mr-2"></div>EXPENSES</div>
+                  <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></div>INCOME</div>
+                  <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>EXPENSES</div>
                 </div>
               </div>
             </div>

@@ -30,3 +30,12 @@ export const investmentsData = [
   { id: 2, name: 'Blue Ridge REIT', type: 'REAL ESTATE • MONTHLY DIV', icon: Building2, iconBg: 'bg-orange-100 dark:bg-gray-800', iconColor: 'text-orange-700 dark:text-gray-300', value: '$125,000.00', dayChange: '0.0%', dayChangeType: 'neutral', totalGain: '+$12,400.00', roi: '11.0%', gainType: 'positive', goal: 'RETIREMENT' },
   { id: 3, name: 'Vanguard Global Tech Fund', type: 'MUTUAL FUND • GROWTH', icon: Landmark, iconBg: 'bg-gray-100 dark:bg-[#121212]', iconColor: 'text-gray-700 dark:text-gray-400', value: '$64,120.30', dayChange: '-0.8%', dayChangeType: 'negative', totalGain: '+$8,920.00', roi: '16.2%', gainType: 'positive', goal: 'COLLEGE' }
 ];
+export const portfolioPerformanceData = [
+  { month: 'Jan', invested: 250000, current: 260000 },
+  { month: 'Feb', invested: 260000, current: 275000 },
+  { month: 'Mar', invested: 270000, current: 280000 },
+  { month: 'Apr', invested: 280000, current: 270000 },
+  { month: 'May', invested: 290000, current: 310000 },
+  { month: 'Jun', invested: 300000, current: 340000 },
+  { month: 'Jul', invested: 312000, current: 428592 }
+];

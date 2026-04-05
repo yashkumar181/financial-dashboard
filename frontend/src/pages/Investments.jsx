@@ -3,7 +3,8 @@ import {
   TrendingUp, Wallet, Activity, PieChart, BarChart2, 
   ChevronDown, Filter, History, Lightbulb, MoreHorizontal
 } from 'lucide-react';
-import { investmentsData } from '../data/mockData';
+import { investmentsData, portfolioPerformanceData } from '../data/mockData';
+import AreaChart from '../components/charts/AreaChart'; // Added Import
 
 const Investments = () => {
   return (
@@ -24,6 +25,7 @@ const Investments = () => {
         </div>
       </div>
 
+      {/* Top Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-[#0A3D8B] dark:bg-[#1A2235] p-6 rounded-2xl shadow-md text-white relative overflow-hidden flex flex-col justify-between h-40 border dark:border-blue-900/30">
           <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 pointer-events-none">
@@ -64,28 +66,39 @@ const Investments = () => {
         </div>
       </div>
 
+      {/* Row 2: Performance Area Chart + Colored Pie Chart */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-        <div className="xl:col-span-2 bg-white dark:bg-[#1E1E1E] p-6 md:p-8 rounded-2xl shadow-sm border border-gray-50 dark:border-white/5">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-sm font-bold text-[#0F172A] dark:text-gray-200">Asset Allocation</h2>
-            <div className="flex space-x-2">
-              <button className="w-6 h-6 rounded bg-[#F0F5FF] dark:bg-[#2A2A2A] text-[#0A3D8B] dark:text-gray-300 flex items-center justify-center">
-                <PieChart className="w-3.5 h-3.5" />
-              </button>
-              <button className="w-6 h-6 rounded text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-[#121212] flex items-center justify-center">
-                <BarChart2 className="w-3.5 h-3.5" />
-              </button>
+        
+        {/* NEW AREA CHART */}
+        <div className="xl:col-span-2 bg-white dark:bg-[#1E1E1E] p-6 md:p-8 rounded-2xl shadow-sm border border-gray-50 dark:border-white/5 flex flex-col">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-sm font-bold text-[#0F172A] dark:text-gray-200 mb-1">Holdings Performance</h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400">P&L trajectory against initial capital</p>
+            </div>
+            <div className="flex items-center space-x-4 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-slate-400 mr-2"></div>INVESTED</div>
+              <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></div>CURRENT</div>
             </div>
           </div>
+          <AreaChart data={portfolioPerformanceData} />
+        </div>
+
+        {/* UPDATED PIE CHART */}
+        <div className="bg-white dark:bg-[#1E1E1E] p-6 md:p-8 rounded-2xl shadow-sm border border-gray-50 dark:border-white/5 flex flex-col">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-sm font-bold text-[#0F172A] dark:text-gray-200">Asset Allocation</h2>
+            <PieChart className="w-4 h-4 text-gray-400" />
+          </div>
           
-          <div className="flex flex-col md:flex-row items-center justify-center gap-10">
-            <div className="relative w-48 h-48">
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <div className="relative w-48 h-48 mb-6">
               <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
-                <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#0A3D8B" className="dark:stroke-gray-300" strokeWidth="4" strokeDasharray="42.5 57.5" strokeDashoffset="0"></circle>
-                <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#4B5563" className="dark:stroke-gray-500" strokeWidth="4" strokeDasharray="28.1 71.9" strokeDashoffset="-42.5"></circle>
-                <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#991B1B" className="dark:stroke-gray-600" strokeWidth="4" strokeDasharray="15.4 84.6" strokeDashoffset="-70.6"></circle>
-                <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#9CA3AF" className="dark:stroke-gray-700" strokeWidth="4" strokeDasharray="10 90" strokeDashoffset="-86"></circle>
-                <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#DBEAFE" className="dark:stroke-[#121212]" strokeWidth="4" strokeDasharray="4 96" strokeDashoffset="-96"></circle>
+                {/* Updated Colors to match Shyara */}
+                <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#3b82f6" strokeWidth="4" strokeDasharray="42.5 57.5" strokeDashoffset="0"></circle>
+                <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#8b5cf6" strokeWidth="4" strokeDasharray="28.1 71.9" strokeDashoffset="-42.5"></circle>
+                <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#f59e0b" strokeWidth="4" strokeDasharray="15.4 84.6" strokeDashoffset="-70.6"></circle>
+                <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#10b981" strokeWidth="4" strokeDasharray="14 86" strokeDashoffset="-86"></circle>
               </svg>
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center mt-1">
                 <span className="block text-[10px] font-bold text-gray-400 dark:text-gray-500 tracking-widest uppercase">Total</span>
@@ -93,24 +106,28 @@ const Investments = () => {
               </div>
             </div>
 
-            <div className="w-full md:w-64 space-y-4">
+            <div className="w-full space-y-3">
               <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center"><div className="w-2.5 h-2.5 rounded-full bg-[#0A3D8B] dark:bg-gray-300 mr-3"></div><span className="text-gray-600 dark:text-gray-400 font-semibold">Stocks & ETFs</span></div>
+                <div className="flex items-center"><div className="w-2.5 h-2.5 rounded-full bg-blue-500 mr-3"></div><span className="text-gray-600 dark:text-gray-400 font-semibold">Stocks & ETFs</span></div>
                 <span className="font-bold text-[#0F172A] dark:text-gray-200">42.5%</span>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center"><div className="w-2.5 h-2.5 rounded-full bg-[#4B5563] dark:bg-gray-500 mr-3"></div><span className="text-gray-600 dark:text-gray-400 font-semibold">Mutual Funds</span></div>
+                <div className="flex items-center"><div className="w-2.5 h-2.5 rounded-full bg-violet-500 mr-3"></div><span className="text-gray-600 dark:text-gray-400 font-semibold">Mutual Funds</span></div>
                 <span className="font-bold text-[#0F172A] dark:text-gray-200">28.1%</span>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center"><div className="w-2.5 h-2.5 rounded-full bg-[#991B1B] dark:bg-gray-600 mr-3"></div><span className="text-gray-600 dark:text-gray-400 font-semibold">Real Estate</span></div>
+                <div className="flex items-center"><div className="w-2.5 h-2.5 rounded-full bg-amber-500 mr-3"></div><span className="text-gray-600 dark:text-gray-400 font-semibold">Real Estate</span></div>
                 <span className="font-bold text-[#0F172A] dark:text-gray-200">15.4%</span>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="bg-[#F0F5FF] dark:bg-[#1A2235] p-6 md:p-8 rounded-2xl shadow-sm border border-blue-50 dark:border-blue-900/30">
+      {/* Row 3: Insights & Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        
+        <div className="bg-[#F0F5FF] dark:bg-[#1A2235] p-6 rounded-2xl shadow-sm border border-blue-50 dark:border-blue-900/30 flex flex-col justify-between">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-sm font-bold text-[#0F172A] dark:text-gray-200">Monthly Mandates</h2>
             <span className="bg-[#E0E7FF] dark:bg-[#202A40] text-[#0A3D8B] dark:text-blue-400 text-[9px] font-bold px-2 py-1 rounded uppercase tracking-widest">Active</span>
@@ -136,13 +153,42 @@ const Investments = () => {
               </div>
             </div>
           </div>
-          <button className="w-full bg-transparent border border-dashed border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 rounded-xl py-3 text-xs font-bold hover:bg-white dark:hover:bg-[#202A40] hover:text-[#0A3D8B] dark:hover:text-gray-200 hover:border-[#0A3D8B] dark:hover:border-gray-500 transition-colors uppercase tracking-wide">
-            + Add New Automation
+          <button className="w-full bg-transparent border border-dashed border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 rounded-xl py-2.5 text-xs font-bold hover:bg-white dark:hover:bg-[#202A40] hover:text-[#0A3D8B] dark:hover:text-gray-200 transition-colors uppercase tracking-wide">
+            + Add New
+          </button>
+        </div>
+
+        <div className="bg-[#0F172A] dark:bg-[#1A2235] p-6 rounded-2xl shadow-md flex flex-col justify-between border dark:border-blue-900/30">
+          <div className="mb-4">
+            <span className="bg-blue-600 dark:bg-blue-800 text-white text-[8px] font-bold px-2 py-1 rounded uppercase tracking-widest">Pro Insight</span>
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-white mb-2">Tax Harvesting Opportunity</h3>
+            <p className="text-xs text-gray-400 dark:text-blue-100 leading-relaxed mb-4">
+              You have $2,400 in unrealized short-term losses. Consider switching some equity holdings to offset gains.
+            </p>
+            <button className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white pb-0.5 hover:text-blue-200 hover:border-blue-200 transition-colors">
+              Review Harvest strategy
+            </button>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-[#1E1E1E] border-2 border-dashed border-gray-200 dark:border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center text-center">
+          <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-[#121212] flex items-center justify-center mb-4 border border-gray-100 dark:border-white/5">
+            <History className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+          </div>
+          <h3 className="text-sm font-bold text-[#0F172A] dark:text-gray-200 mb-2">Recent Activity</h3>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 max-w-xs">
+            Switch of $5,000 from Alpha MF to Beta Stocks completed yesterday.
+          </p>
+          <button className="text-[10px] font-bold text-[#0A3D8B] dark:text-gray-400 tracking-widest uppercase hover:underline">
+            View History
           </button>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-sm border border-gray-50 dark:border-white/5 overflow-hidden mb-8">
+      {/* Holdings Table */}
+      <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-sm border border-gray-50 dark:border-white/5 overflow-hidden">
         <div className="p-6 flex flex-col sm:flex-row justify-between sm:items-center border-b border-gray-50 dark:border-white/5 gap-4">
           <h3 className="text-sm font-bold text-[#0F172A] dark:text-gray-200">Active Holdings</h3>
           <div className="flex space-x-3">
@@ -223,40 +269,6 @@ const Investments = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-        <div className="bg-[#0F172A] dark:bg-[#1A2235] p-8 rounded-2xl shadow-md flex flex-col justify-between border dark:border-blue-900/30">
-          <div className="mb-4">
-            <span className="bg-blue-600 dark:bg-blue-800 text-white text-[8px] font-bold px-2 py-1 rounded uppercase tracking-widest">Pro Insight</span>
-          </div>
-          <div className="flex justify-between items-start gap-6">
-            <div>
-              <h3 className="text-lg font-bold text-white mb-2">Tax Harvesting Opportunity</h3>
-              <p className="text-xs text-gray-400 dark:text-blue-100 leading-relaxed mb-6">
-                You have $2,400 in unrealized short-term losses. Consider switching some equity holdings to offset gains.
-              </p>
-              <button className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white pb-0.5 hover:text-blue-200 hover:border-blue-200 transition-colors">
-                Review Harvest strategy
-              </button>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-              <Lightbulb className="w-6 h-6 text-blue-400" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-[#1E1E1E] border-2 border-dashed border-gray-200 dark:border-white/10 rounded-2xl p-8 flex flex-col items-center justify-center text-center">
-          <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-[#121212] flex items-center justify-center mb-4 border border-gray-100 dark:border-white/5">
-            <History className="w-5 h-5 text-gray-400 dark:text-gray-500" />
-          </div>
-          <h3 className="text-sm font-bold text-[#0F172A] dark:text-gray-200 mb-2">Recent Activity</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-6 max-w-xs">
-            Switch of $5,000 from Alpha MF to Beta Stocks completed yesterday.
-          </p>
-          <button className="text-[10px] font-bold text-[#0A3D8B] dark:text-gray-400 tracking-widest uppercase hover:underline">
-            View History
-          </button>
-        </div>
-      </div>
     </div>
   );
 };
