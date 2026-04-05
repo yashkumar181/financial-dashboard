@@ -11,7 +11,7 @@ const Subscriptions = () => {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
         <div className="xl:col-span-2 bg-white dark:bg-[#1E1E1E] p-8 rounded-2xl shadow-sm border border-gray-50 dark:border-white/5 flex flex-col justify-between">
           <div>
-            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 tracking-widest uppercase mb-4">Total Monthly Burn</p>
+            <p className="text-xs font-bold text-gray-500 dark:text-[#a3a3a3] tracking-widest uppercase mb-4">Total Monthly Burn</p>
             <h2 className="text-5xl font-bold text-[#0F172A] dark:text-gray-200 mb-3">$428.50</h2>
             <p className="text-sm font-semibold text-red-700 dark:text-red-400 flex items-center mb-8">
               <TrendingUp className="w-4 h-4 mr-1" />

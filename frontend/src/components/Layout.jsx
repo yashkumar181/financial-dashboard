@@ -1,27 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import MobileNav from './MobileNav';
 
 const Layout = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   return (
-    // Updated background to Shyara's #0a0a0a
     <div className="flex h-screen bg-[#F4F7FA] dark:bg-[#0a0a0a] font-sans overflow-hidden transition-colors duration-300">
       
-      <Sidebar 
-        isMobileMenuOpen={isMobileMenuOpen}
-        setIsMobileMenuOpen={setIsMobileMenuOpen}
-      />
+      {/* SIDEBAR (Hidden on Mobile) */}
+      <Sidebar />
 
+      {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col overflow-hidden w-full">
-        <Header setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <Header />
         
-        <main className="flex-1 overflow-auto">
+        {/* Added pb-16 to ensure content isn't hidden behind the mobile bottom nav */}
+        <main className="flex-1 overflow-auto pb-16 md:pb-0">
           <Outlet />
         </main>
       </div>
+
+      {/* BOTTOM NAV (Hidden on Desktop) */}
+      <MobileNav />
 
     </div>
   );
