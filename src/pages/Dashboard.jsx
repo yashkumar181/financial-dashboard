@@ -11,6 +11,30 @@ const Dashboard = () => {
   const { transactions } = useFinance();
   const [chartTimeframe, setChartTimeframe] = useState('monthly');
 
+  // Dynamic data for the top metric cards based on the selected tab
+  const metricsData = {
+    monthly: {
+      netWorth: '₹2,482,910.42', nwChange: '+12.4%', nwClass: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400',
+      cashFlow: '₹14,290.00', cfChange: '+4.2%', cfClass: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400', cfDesc: 'Efficiency: A-',
+      surplus: '₹3,104.50', surChange: '-1.8%', surClass: 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400', surDesc: 'Remaining cycle: 8 days',
+      savings: '42.5%', savDesc: 'Outperforming index by 12%'
+    },
+    quarterly: {
+      netWorth: '₹2,482,910.42', nwChange: '+8.1%', nwClass: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400',
+      cashFlow: '₹42,870.00', cfChange: '+5.5%', cfClass: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400', cfDesc: 'Efficiency: A',
+      surplus: '₹9,313.50', surChange: '+2.1%', surClass: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400', surDesc: 'Remaining cycle: 24 days',
+      savings: '40.2%', savDesc: 'Outperforming index by 9%'
+    },
+    annual: {
+      netWorth: '₹2,482,910.42', nwChange: '+18.4%', nwClass: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400',
+      cashFlow: '₹171,480.00', cfChange: '+11.2%', cfClass: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400', cfDesc: 'Efficiency: A+',
+      surplus: '₹37,254.00', surChange: '+4.5%', surClass: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400', surDesc: 'Remaining cycle: 289 days',
+      savings: '45.1%', savDesc: 'Outperforming index by 15%'
+    }
+  };
+
+  const currentMetrics = metricsData[activeTab];
+
   return (
     <div className="p-4 md:p-10 relative">
       <div className="flex flex-col md:flex-row justify-between md:items-end mb-8 gap-4">
@@ -26,41 +50,41 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626]">
+        <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626] transition-all">
           <div className="flex justify-between items-start mb-8">
             <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-[#262626] flex items-center justify-center text-blue-600 dark:text-gray-300 shrink-0"><Wallet className="w-5 h-5" /></div>
-            <span className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2 py-1 rounded-full">+12.4%</span>
+            <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${currentMetrics.nwClass}`}>{currentMetrics.nwChange}</span>
           </div>
           <p className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-wider mb-1 uppercase">Net Worth</p>
-          <h3 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200 mb-4">₹2,482,910.42</h3>
+          <h3 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200 mb-4">{currentMetrics.netWorth}</h3>
           <div className="w-16 h-1 bg-[#0A3D8B] dark:bg-gray-400 rounded-full"></div>
         </div>
 
-        <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626]">
+        <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626] transition-all">
           <div className="flex justify-between items-start mb-8">
             <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-[#262626] flex items-center justify-center text-blue-600 dark:text-gray-300 shrink-0"><CreditCard className="w-5 h-5" /></div>
-            <span className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2 py-1 rounded-full">+4.2%</span>
+            <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${currentMetrics.cfClass}`}>{currentMetrics.cfChange}</span>
           </div>
-          <p className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-wider mb-1 uppercase">Monthly Cash Flow</p>
-          <h3 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200 mb-2">₹14,290.00</h3>
-          <p className="text-[10px] font-semibold text-gray-500 dark:text-[#a3a3a3] uppercase">Efficiency: <span className="text-emerald-500">A-</span></p>
+          <p className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-wider mb-1 uppercase">Cash Flow</p>
+          <h3 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200 mb-2">{currentMetrics.cashFlow}</h3>
+          <p className="text-[10px] font-semibold text-gray-500 dark:text-[#a3a3a3] uppercase">{currentMetrics.cfDesc}</p>
         </div>
 
-        <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626]">
+        <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626] transition-all">
           <div className="flex justify-between items-start mb-8">
             <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-[#262626] flex items-center justify-center text-blue-600 dark:text-gray-300 shrink-0"><PiggyBank className="w-5 h-5" /></div>
-            <span className="bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 text-[10px] font-bold px-2 py-1 rounded-full">-1.8%</span>
+            <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${currentMetrics.surClass}`}>{currentMetrics.surChange}</span>
           </div>
           <p className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-wider mb-1 uppercase">Discretionary Surplus</p>
-          <h3 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200 mb-2">₹3,104.50</h3>
-          <p className="text-[10px] font-semibold text-gray-500 dark:text-[#a3a3a3]">Remaining cycle: 8 days</p>
+          <h3 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200 mb-2">{currentMetrics.surplus}</h3>
+          <p className="text-[10px] font-semibold text-gray-500 dark:text-[#a3a3a3]">{currentMetrics.surDesc}</p>
         </div>
 
-        <div className="bg-[#0A3D8B] dark:bg-gray-800 p-6 rounded-2xl shadow-md text-white border dark:border-[#262626]">
+        <div className="bg-[#0A3D8B] dark:bg-gray-800 p-6 rounded-2xl shadow-md text-white border dark:border-[#262626] transition-all">
           <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center mb-8 shrink-0"><TrendingUp className="w-5 h-5 text-white" /></div>
           <p className="text-[10px] font-bold text-blue-200 dark:text-[#a3a3a3] tracking-wider mb-1 uppercase">Savings Rate</p>
-          <h3 className="text-4xl font-bold mb-4">42.5%</h3>
-          <p className="text-[9px] font-semibold text-blue-200 dark:text-[#a3a3a3] uppercase tracking-wide">Outperforming index by 12%</p>
+          <h3 className="text-4xl font-bold mb-4">{currentMetrics.savings}</h3>
+          <p className="text-[9px] font-semibold text-blue-200 dark:text-[#a3a3a3] uppercase tracking-wide">{currentMetrics.savDesc}</p>
         </div>
       </div>
 

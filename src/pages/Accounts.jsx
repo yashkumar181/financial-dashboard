@@ -1,20 +1,125 @@
-import React from 'react';
-import { RefreshCw, Building2, Wallet, CreditCard } from 'lucide-react';
+import React, { useState } from 'react';
+import { RefreshCw, Building2, Wallet, CreditCard, Plus, X, FileText, CheckCircle2, Trash2 } from 'lucide-react';
+import { createPortal } from 'react-dom';
 
 const Accounts = () => {
+  const [isReconciling, setIsReconciling] = useState(false);
+  const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
+  const [selectedAccountDetail, setSelectedAccountDetail] = useState(null);
+  const [showAuditLog, setShowAuditLog] = useState(false);
+
+  // Dynamic state for Liquid Accounts
+  const [liquidAccounts, setLiquidAccounts] = useState([
+    {
+      id: 1,
+      type: 'bank',
+      name: 'HDFC Salary',
+      subtitle: 'XXXX-9021',
+      balance: 12450.00,
+      status: 'Active',
+      yieldStr: '+3.2%',
+      iconColor: 'text-blue-600 dark:text-blue-400',
+      iconBg: 'bg-blue-50 dark:bg-[#262626]'
+    },
+    {
+      id: 2,
+      type: 'wallet',
+      name: 'FinTech Wallet',
+      subtitle: 'Linked to UPI',
+      balance: 2105.80,
+      usage: 75,
+      iconColor: 'text-purple-600 dark:text-purple-400',
+      iconBg: 'bg-purple-50 dark:bg-[#262626]'
+    }
+  ]);
+
+  // Dynamic state for Credit Cards & Liabilities
+  const [creditCards, setCreditCards] = useState([
+    {
+      id: 1,
+      name: 'Axis Privilege CC',
+      subtitle: 'Visa Infinite • XXXX-4421',
+      due: 4820.00,
+      limit: 25000.00
+    }
+  ]);
+
+  // Form State for New Account/Card
+  const [newAccountData, setNewAccountData] = useState({ 
+    name: '', 
+    subtitle: '', 
+    type: 'bank', 
+    balance: '', 
+    limit: '' 
+  });
+
+  const handleReconcile = () => {
+    setIsReconciling(true);
+    setTimeout(() => setIsReconciling(false), 1500);
+  };
+
+  const handleAddAccount = (e) => {
+    e.preventDefault();
+    
+    if (newAccountData.type === 'credit') {
+      const newCard = {
+        id: Date.now(),
+        name: newAccountData.name,
+        subtitle: newAccountData.subtitle,
+        due: parseFloat(newAccountData.balance) || 0,
+        limit: parseFloat(newAccountData.limit) || 1000
+      };
+      setCreditCards([...creditCards, newCard]);
+    } else {
+      const newAcc = {
+        id: Date.now(),
+        type: newAccountData.type,
+        name: newAccountData.name,
+        subtitle: newAccountData.subtitle,
+        balance: parseFloat(newAccountData.balance) || 0,
+        status: 'New',
+        yieldStr: '+0.0%',
+        usage: 0,
+        iconColor: newAccountData.type === 'bank' ? 'text-emerald-600 dark:text-emerald-400' : 'text-orange-600 dark:text-orange-400',
+        iconBg: newAccountData.type === 'bank' ? 'bg-emerald-50 dark:bg-[#262626]' : 'bg-orange-50 dark:bg-[#262626]'
+      };
+      setLiquidAccounts([...liquidAccounts, newAcc]);
+    }
+    
+    setIsAddAccountOpen(false);
+    setNewAccountData({ name: '', subtitle: '', type: 'bank', balance: '', limit: '' });
+  };
+
+  const handleDeleteAccount = (id) => {
+    setLiquidAccounts(liquidAccounts.filter(acc => acc.id !== id));
+  };
+
+  const handleDeleteCard = (id) => {
+    setCreditCards(creditCards.filter(card => card.id !== id));
+  };
+
   return (
     <div className="flex-1 overflow-auto p-4 md:p-10">
+      
+      {/* HEADER & TOP BUTTONS */}
       <div className="flex flex-col md:flex-row justify-between md:items-end mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200 mb-1">Accounts & Cards</h1>
           <p className="text-sm text-gray-500 dark:text-[#a3a3a3]">Real-time consolidated view of your architectural capital.</p>
         </div>
-        <button className="flex items-center justify-center px-4 py-2 bg-[#0A3D8B] dark:bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-[#082f6b] dark:hover:bg-blue-500 transition-colors shadow-sm">
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Account Reconciliation
-        </button>
+        <div className="flex space-x-3">
+          <button onClick={() => setIsAddAccountOpen(true)} className="flex items-center justify-center px-4 py-2 bg-[#F8F9FA] dark:bg-[#121212] border border-gray-200 dark:border-[#262626] text-[#0F172A] dark:text-gray-200 rounded-lg text-sm font-semibold hover:bg-gray-100 dark:hover:bg-[#1E1E1E] transition-colors shadow-sm whitespace-nowrap">
+            <Plus className="w-4 h-4 mr-2" />
+            Add Account
+          </button>
+          <button onClick={handleReconcile} disabled={isReconciling} className="flex items-center justify-center px-4 py-2 bg-[#0A3D8B] dark:bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-[#082f6b] dark:hover:bg-blue-500 transition-colors shadow-sm disabled:opacity-70 whitespace-nowrap">
+            <RefreshCw className={`w-4 h-4 mr-2 ${isReconciling ? 'animate-spin' : ''}`} />
+            {isReconciling ? 'Reconciling...' : 'Account Reconciliation'}
+          </button>
+        </div>
       </div>
 
+      {/* TOP METRICS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626]">
           <p className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-wider mb-2 uppercase">Net Worth</p>
@@ -49,102 +154,127 @@ const Accounts = () => {
               <div className="h-px bg-gray-200 dark:bg-[#262626] flex-1"></div>
             </div>
 
+            {/* DYNAMIC ACCOUNTS GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626] flex flex-col justify-between h-56">
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-[#262626] flex items-center justify-center text-blue-600 dark:text-blue-400">
-                      <Building2 className="w-5 h-5" />
+              {liquidAccounts.map((acc) => (
+                <div key={acc.id} className="bg-[#F8F9FA] dark:bg-[#121212] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626] flex flex-col justify-between h-56 animate-fade-slide-up">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-10 h-10 rounded-lg ${acc.iconBg} flex items-center justify-center ${acc.iconColor}`}>
+                        {acc.type === 'bank' ? <Building2 className="w-5 h-5" /> : <Wallet className="w-5 h-5" />}
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-[#0F172A] dark:text-gray-200">{acc.name}</h4>
+                        <p className="text-[10px] text-gray-500 dark:text-[#a3a3a3] font-semibold tracking-wider">{acc.subtitle}</p>
+                      </div>
                     </div>
+                    {acc.status && (
+                      <span className={`text-[9px] font-bold px-2 py-1 rounded uppercase tracking-wider border border-transparent dark:border-[#262626] ${acc.status === 'New' ? 'bg-emerald-100 dark:bg-[#262626] text-emerald-700 dark:text-emerald-400' : 'bg-orange-100 dark:bg-[#262626] text-orange-700 dark:text-orange-400'}`}>
+                        {acc.status}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-wider mb-1 uppercase">Available Balance</p>
+                    <h3 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200">₹{acc.balance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
+                  </div>
+                  
+                  {acc.type === 'bank' ? (
+                    <div className="flex justify-between items-end">
+                      <p className="text-[10px] font-semibold text-gray-500 dark:text-[#a3a3a3]">Monthly Yield: <span className="text-emerald-600 dark:text-emerald-400 font-bold">{acc.yieldStr}</span></p>
+                      <div className="flex items-center space-x-4">
+                        <button onClick={() => handleDeleteAccount(acc.id)} className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => setSelectedAccountDetail(acc)} className="text-[10px] font-bold text-[#0A3D8B] dark:text-blue-400 uppercase tracking-wider hover:underline">DETAILS</button>
+                      </div>
+                    </div>
+                  ) : (
                     <div>
-                      <h4 className="text-sm font-bold text-[#0F172A] dark:text-gray-200">HDFC Salary</h4>
-                      <p className="text-[10px] text-gray-500 dark:text-[#a3a3a3] font-semibold tracking-wider">XXXX-9021</p>
+                      <div className="w-full h-1.5 bg-gray-200 dark:bg-[#0a0a0a] rounded-full overflow-hidden mb-2">
+                        <div className="h-full bg-purple-500 rounded-full" style={{ width: `${acc.usage}%` }}></div>
+                      </div>
+                      <div className="flex justify-between items-end">
+                        <p className="text-[9px] font-bold text-gray-500 dark:text-[#a3a3a3] uppercase tracking-wide">{acc.usage}% of monthly limit used</p>
+                        <div className="flex items-center space-x-4">
+                          <button onClick={() => handleDeleteAccount(acc.id)} className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                          <button onClick={() => setSelectedAccountDetail(acc)} className="text-[10px] font-bold text-[#0A3D8B] dark:text-blue-400 uppercase tracking-wider hover:underline">DETAILS</button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <span className="bg-orange-100 dark:bg-[#262626] text-orange-700 dark:text-orange-400 text-[9px] font-bold px-2 py-1 rounded uppercase tracking-wider border border-transparent dark:border-[#262626]">Active</span>
+                  )}
                 </div>
-                <div>
-                  <p className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-wider mb-1 uppercase">Available Balance</p>
-                  <h3 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200">₹12,450.00</h3>
-                </div>
-                <div className="flex justify-between items-end">
-                  <p className="text-[10px] font-semibold text-gray-500 dark:text-[#a3a3a3]">Monthly Yield: <span className="text-emerald-600 dark:text-emerald-400 font-bold">+3.2%</span></p>
-                  <button className="text-[10px] font-bold text-[#0A3D8B] dark:text-blue-400 uppercase tracking-wider hover:underline">DETAILS</button>
-                </div>
-              </div>
-
-              <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626] flex flex-col justify-between h-56">
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-lg bg-purple-50 dark:bg-[#262626] flex items-center justify-center text-purple-600 dark:text-purple-400">
-                      <Wallet className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-[#0F172A] dark:text-gray-200">FinTech Wallet</h4>
-                      <p className="text-[10px] text-gray-500 dark:text-[#a3a3a3] font-semibold tracking-wider">Linked to UPI</p>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-wider mb-1 uppercase">Wallet Balance</p>
-                  <h3 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200">₹2,105.80</h3>
-                </div>
-                <div>
-                  <div className="w-full h-1.5 bg-gray-200 dark:bg-[#0a0a0a] rounded-full overflow-hidden mb-2">
-                    <div className="h-full bg-purple-500 w-[75%] rounded-full"></div>
-                  </div>
-                  <p className="text-[9px] font-bold text-gray-500 dark:text-[#a3a3a3] uppercase tracking-wide">75% of monthly limit used</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
           <div>
-            <div className="flex items-center justify-center mb-6">
+            <div className="flex items-center justify-center mb-6 mt-8">
               <div className="h-px bg-gray-200 dark:bg-[#262626] flex-1"></div>
               <span className="px-4 text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] uppercase tracking-widest text-center">Credit & Liabilities</span>
               <div className="h-px bg-gray-200 dark:bg-[#262626] flex-1"></div>
             </div>
 
-            <div className="bg-[#212735] dark:bg-[#1A1F2C] p-6 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center text-white h-auto sm:h-40 relative overflow-hidden gap-6 border border-transparent dark:border-[#262626]">
-              <div className="absolute right-0 top-0 opacity-10 w-64 h-64 transform translate-x-1/4 -translate-y-1/4 pointer-events-none">
-                <CreditCard className="w-full h-full" />
-              </div>
-              <div className="flex flex-col justify-between h-full z-10 w-full sm:w-auto">
-                <div className="flex items-center space-x-3 mb-6 sm:mb-4">
-                  <div className="w-10 h-10 rounded bg-white/10 flex items-center justify-center shrink-0">
-                    <CreditCard className="w-5 h-5 text-gray-300" />
+            {/* DYNAMIC CREDIT CARDS GRID */}
+            <div className="space-y-4">
+              {creditCards.map(card => {
+                const percentage = Math.min((card.due / card.limit) * 100, 100).toFixed(0);
+                return (
+                  <div key={card.id} className="bg-[#212735] dark:bg-[#1A1F2C] p-6 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center text-white h-auto sm:h-40 relative overflow-hidden gap-6 border border-transparent dark:border-[#262626] animate-fade-slide-up">
+                    <div className="absolute right-0 top-0 opacity-10 w-64 h-64 transform translate-x-1/4 -translate-y-1/4 pointer-events-none">
+                      <CreditCard className="w-full h-full" />
+                    </div>
+                    
+                    <div className="flex flex-col justify-between h-full z-10 w-full sm:w-auto flex-1">
+                      <div className="flex items-center space-x-3 mb-6 sm:mb-4">
+                        <div className="w-10 h-10 rounded bg-white/10 flex items-center justify-center shrink-0">
+                          <CreditCard className="w-5 h-5 text-gray-300" />
+                        </div>
+                        <div className="flex-1 flex justify-between items-start pr-4">
+                          <div>
+                            <h4 className="text-sm font-bold text-white">{card.name}</h4>
+                            <p className="text-[10px] text-gray-400 font-medium tracking-wide">{card.subtitle}</p>
+                          </div>
+                          <button onClick={() => handleDeleteCard(card.id)} className="text-gray-400 hover:text-red-400 transition-colors ml-4 pt-1">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="flex space-x-8 sm:space-x-12">
+                        <div>
+                          <p className="text-[9px] font-bold text-gray-400 tracking-widest mb-1 uppercase">Current Due</p>
+                          <h3 className="text-xl font-bold text-white">₹{card.due.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-bold text-gray-400 tracking-widest mb-1 uppercase">Credit Limit</p>
+                          <h3 className="text-xl font-bold text-white">₹{card.limit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 z-10 shrink-0 self-center sm:mr-4">
+                      <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
+                        <path className="text-gray-700" strokeWidth="4" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <path className="text-blue-300" strokeWidth="4" strokeDasharray={`${percentage}, 100`} stroke="currentColor" fill="none" strokeLinecap="round" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                      </svg>
+                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                        <span className="block text-sm font-bold">{percentage}%</span>
+                        <span className="block text-[8px] text-gray-400 font-bold uppercase tracking-widest">Used</span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-white">Axis Privilege CC</h4>
-                    <p className="text-[10px] text-gray-400 font-medium tracking-wide">Visa Infinite • XXXX-4421</p>
-                  </div>
-                </div>
-                <div className="flex space-x-8 sm:space-x-12">
-                  <div>
-                    <p className="text-[9px] font-bold text-gray-400 tracking-widest mb-1 uppercase">Current Due</p>
-                    <h3 className="text-xl font-bold text-white">₹4,820.00</h3>
-                  </div>
-                  <div>
-                    <p className="text-[9px] font-bold text-gray-400 tracking-widest mb-1 uppercase">Credit Limit</p>
-                    <h3 className="text-xl font-bold text-white">₹25,000.00</h3>
-                  </div>
-                </div>
-              </div>
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 z-10 shrink-0 self-center sm:mr-4">
-                <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
-                  <path className="text-gray-700" strokeWidth="4" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                  <path className="text-blue-300" strokeWidth="4" strokeDasharray="19, 100" stroke="currentColor" fill="none" strokeLinecap="round" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                </svg>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                  <span className="block text-sm font-bold">19%</span>
-                  <span className="block text-[8px] text-gray-400 font-bold uppercase tracking-widest">Used</span>
-                </div>
-              </div>
+                )
+              })}
+              {creditCards.length === 0 && (
+                 <div className="bg-[#212735] dark:bg-[#1A1F2C] p-6 rounded-2xl shadow-md flex items-center justify-center text-white h-32 border border-transparent dark:border-[#262626] border-dashed">
+                   <p className="text-sm font-semibold text-gray-400">No active credit cards.</p>
+                 </div>
+              )}
             </div>
           </div>
         </div>
 
+        {/* SIDEBAR WIDGETS */}
         <div className="w-full lg:w-80 shrink-0 space-y-6">
           <div className="bg-[#0A3D8B] dark:bg-[#1A2235] p-8 rounded-2xl shadow-md text-white relative overflow-hidden h-72 flex flex-col justify-between border border-transparent dark:border-[#262626]">
             <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }}></div>
@@ -181,24 +311,16 @@ const Accounts = () => {
                   <div className="h-full bg-orange-500 w-[20%] rounded-full"></div>
                 </div>
               </div>
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs font-bold text-[#0F172A] dark:text-gray-200">Personal Lines</span>
-                  <span className="text-xs font-bold text-gray-500 dark:text-[#a3a3a3]">₹3,800</span>
-                </div>
-                <div className="w-full h-1.5 bg-gray-200 dark:bg-[#0a0a0a] rounded-full overflow-hidden">
-                  <div className="h-full bg-red-800 dark:bg-red-500 w-[10%] rounded-full"></div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* RECENT CLEARING */}
       <div>
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-bold text-[#0F172A] dark:text-gray-200">Recent Clearing</h2>
-          <button className="text-[10px] font-bold text-[#0A3D8B] dark:text-blue-400 uppercase tracking-widest hover:underline">VIEW AUDIT LOG</button>
+          <button onClick={() => setShowAuditLog(true)} className="text-[10px] font-bold text-[#0A3D8B] dark:text-blue-400 uppercase tracking-widest hover:underline">VIEW AUDIT LOG</button>
         </div>
         
         <div className="bg-[#F8F9FA] dark:bg-[#121212] rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626] overflow-x-auto">
@@ -240,24 +362,129 @@ const Accounts = () => {
                 </td>
                 <td className="px-6 py-4 text-right text-sm font-bold text-emerald-600 dark:text-emerald-400">+₹4,250.00</td>
               </tr>
-              <tr className="hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-colors">
-                <td className="px-6 py-4 flex items-center space-x-4">
-                  <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-[#262626] text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs font-bold shrink-0">UW</div>
-                  <div>
-                    <p className="text-sm font-bold text-[#0F172A] dark:text-gray-200">Uber Wallet Refill</p>
-                    <p className="text-[10px] text-gray-500 dark:text-[#a3a3a3] font-medium">Nov 21, 2023 • 18:45</p>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-xs font-medium text-gray-600 dark:text-gray-400">FinTech Wallet</td>
-                <td className="px-6 py-4">
-                  <span className="bg-orange-50 dark:bg-[#262626] text-orange-700 dark:text-orange-400 border border-orange-100 dark:border-transparent px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider">Pending</span>
-                </td>
-                <td className="px-6 py-4 text-right text-sm font-bold text-[#0F172A] dark:text-gray-200">-₹25.00</td>
-              </tr>
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* --- MODALS PORTALS --- */}
+      
+      {/* 1. Add Account Modal */}
+      {isAddAccountOpen && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsAddAccountOpen(false)}></div>
+          <div className="bg-[#F8F9FA] dark:bg-[#121212] w-full max-w-md rounded-2xl shadow-2xl relative z-10 border border-gray-200 dark:border-[#262626] overflow-hidden animate-fade-slide-up">
+            <div className="px-6 py-5 border-b border-gray-200 dark:border-[#262626] flex justify-between items-center bg-white dark:bg-[#0a0a0a]">
+              <div>
+                <h2 className="text-lg font-bold text-[#0F172A] dark:text-gray-200">New Account / Card</h2>
+                <p className="text-[10px] text-gray-500 dark:text-[#a3a3a3] uppercase tracking-widest mt-0.5">Link an asset or liability</p>
+              </div>
+              <button onClick={() => setIsAddAccountOpen(false)} className="text-gray-400 hover:text-[#0F172A] dark:hover:text-gray-300 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#262626]"><X className="w-5 h-5" /></button>
+            </div>
+            <form onSubmit={handleAddAccount} className="p-6 space-y-5">
+              <div>
+                <label className="block text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] uppercase tracking-widest mb-2">Account / Card Name</label>
+                <input required type="text" value={newAccountData.name} onChange={e => setNewAccountData({...newAccountData, name: e.target.value})} placeholder="e.g. Chase Sapphire, HDFC Saving" className="w-full px-4 py-3 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#262626] text-[#0F172A] dark:text-gray-200 text-sm font-semibold rounded-xl focus:outline-none focus:border-[#0A3D8B] dark:focus:border-gray-500" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2 md:col-span-1">
+                  <label className="block text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] uppercase tracking-widest mb-2">Type</label>
+                  <select value={newAccountData.type} onChange={e => setNewAccountData({...newAccountData, type: e.target.value, balance: '', limit: ''})} className="w-full px-4 py-3 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#262626] text-[#0F172A] dark:text-gray-200 text-sm font-semibold rounded-xl focus:outline-none focus:border-[#0A3D8B] dark:focus:border-gray-500">
+                    <option value="bank">Bank Account</option>
+                    <option value="wallet">Digital Wallet</option>
+                    <option value="credit">Credit Card</option>
+                  </select>
+                </div>
+                {newAccountData.type === 'credit' ? (
+                  <div className="col-span-2 md:col-span-1">
+                    <label className="block text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] uppercase tracking-widest mb-2">Current Due (₹)</label>
+                    <input required type="number" step="0.01" value={newAccountData.balance} onChange={e => setNewAccountData({...newAccountData, balance: e.target.value})} placeholder="0.00" className="w-full px-4 py-3 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#262626] text-[#0F172A] dark:text-gray-200 text-sm font-semibold rounded-xl focus:outline-none focus:border-[#0A3D8B] dark:focus:border-gray-500" />
+                  </div>
+                ) : (
+                  <div className="col-span-2 md:col-span-1">
+                    <label className="block text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] uppercase tracking-widest mb-2">Current Balance (₹)</label>
+                    <input required type="number" step="0.01" value={newAccountData.balance} onChange={e => setNewAccountData({...newAccountData, balance: e.target.value})} placeholder="0.00" className="w-full px-4 py-3 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#262626] text-[#0F172A] dark:text-gray-200 text-sm font-semibold rounded-xl focus:outline-none focus:border-[#0A3D8B] dark:focus:border-gray-500" />
+                  </div>
+                )}
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className={`${newAccountData.type === 'credit' ? 'col-span-1' : 'col-span-2'}`}>
+                  <label className="block text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] uppercase tracking-widest mb-2">Identifier / Subtitle</label>
+                  <input required type="text" value={newAccountData.subtitle} onChange={e => setNewAccountData({...newAccountData, subtitle: e.target.value})} placeholder="e.g. XXXX-1234 or UPI Link" className="w-full px-4 py-3 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#262626] text-[#0F172A] dark:text-gray-200 text-sm font-semibold rounded-xl focus:outline-none focus:border-[#0A3D8B] dark:focus:border-gray-500" />
+                </div>
+                {newAccountData.type === 'credit' && (
+                  <div className="col-span-1">
+                    <label className="block text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] uppercase tracking-widest mb-2">Credit Limit (₹)</label>
+                    <input required type="number" step="0.01" value={newAccountData.limit} onChange={e => setNewAccountData({...newAccountData, limit: e.target.value})} placeholder="0.00" className="w-full px-4 py-3 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#262626] text-[#0F172A] dark:text-gray-200 text-sm font-semibold rounded-xl focus:outline-none focus:border-[#0A3D8B] dark:focus:border-gray-500" />
+                  </div>
+                )}
+              </div>
+
+              <button type="submit" className="w-full py-3.5 bg-[#0A3D8B] dark:bg-gray-800 hover:bg-[#082f6b] dark:hover:bg-gray-700 text-white rounded-xl text-sm font-bold transition-colors shadow-lg mt-4">Save & Link Entity</button>
+            </form>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* 2. Account Details Modal */}
+      {selectedAccountDetail && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedAccountDetail(null)}></div>
+          <div className="bg-[#F8F9FA] dark:bg-[#121212] w-full max-w-sm rounded-2xl shadow-2xl relative z-10 border border-gray-200 dark:border-[#262626] overflow-hidden animate-fade-slide-up p-6">
+            <div className="flex justify-between items-start mb-6">
+              <div className={`w-12 h-12 rounded-xl ${selectedAccountDetail.iconBg} flex items-center justify-center ${selectedAccountDetail.iconColor}`}>
+                {selectedAccountDetail.type === 'bank' ? <Building2 className="w-6 h-6" /> : <Wallet className="w-6 h-6" />}
+              </div>
+              <button onClick={() => setSelectedAccountDetail(null)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><X className="w-5 h-5" /></button>
+            </div>
+            <h2 className="text-xl font-bold text-[#0F172A] dark:text-gray-200 mb-1">{selectedAccountDetail.name}</h2>
+            <p className="text-xs text-gray-500 dark:text-[#a3a3a3] font-semibold tracking-wider mb-6">{selectedAccountDetail.subtitle}</p>
+            <div className="bg-white dark:bg-[#0a0a0a] p-4 rounded-xl border border-gray-200 dark:border-[#262626] mb-6">
+              <p className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-wider mb-1 uppercase">Available Balance</p>
+              <h3 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200">₹{selectedAccountDetail.balance.toLocaleString(undefined, {minimumFractionDigits: 2})}</h3>
+            </div>
+            <button onClick={() => setSelectedAccountDetail(null)} className="w-full py-3 bg-gray-200 dark:bg-[#262626] hover:bg-gray-300 dark:hover:bg-[#333333] text-[#0F172A] dark:text-gray-200 rounded-xl text-sm font-bold transition-colors">Close</button>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* 3. Audit Log Modal */}
+      {showAuditLog && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAuditLog(false)}></div>
+          <div className="bg-[#F8F9FA] dark:bg-[#121212] w-full max-w-lg rounded-2xl shadow-2xl relative z-10 border border-gray-200 dark:border-[#262626] overflow-hidden animate-fade-slide-up">
+            <div className="px-6 py-5 border-b border-gray-200 dark:border-[#262626] flex justify-between items-center bg-white dark:bg-[#0a0a0a]">
+              <div>
+                <h2 className="text-lg font-bold text-[#0F172A] dark:text-gray-200 flex items-center"><FileText className="w-5 h-5 mr-2 text-[#0A3D8B] dark:text-gray-400"/> System Audit Log</h2>
+              </div>
+              <button onClick={() => setShowAuditLog(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#262626]"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-start gap-4">
+                <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-bold text-[#0F172A] dark:text-gray-200">Reconciliation Successful</p>
+                  <p className="text-xs text-gray-500 dark:text-[#a3a3a3]">All 12 linked accounts synced. No discrepancies found.</p>
+                  <p className="text-[9px] text-gray-400 dark:text-[#666666] font-bold tracking-widest mt-1 uppercase">Today, 14:02 PM</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-bold text-[#0F172A] dark:text-gray-200">Credit Limit Update Detected</p>
+                  <p className="text-xs text-gray-500 dark:text-[#a3a3a3]">Axis Privilege CC limit increased to ₹25,000.00.</p>
+                  <p className="text-[9px] text-gray-400 dark:text-[#666666] font-bold tracking-widest mt-1 uppercase">Yesterday, 09:15 AM</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
     </div>
   );
 };
