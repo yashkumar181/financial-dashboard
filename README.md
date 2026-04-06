@@ -84,6 +84,37 @@ fiscal-clarity/
 ├── package.json
 ├── tailwind.config.js      # Custom theme definitions
 └── vite.config.js
----
+```
 
-## 
+## 🚀 Getting Started
+* **Prerequisites** * Make sure you have Node.js (v16+) and npm installed on your machine.
+
+* **Installation** *
+1. * **Clone the repository:** *
+```bash
+git clone [https://github.com/YOUR_USERNAME/Shyara-Finance-Dashboard.git](https://github.com/YOUR_USERNAME/Shyara-Finance-Dashboard.git)
+cd Shyara-Finance-Dashboard
+```
+
+2. * **Install dependencies:** *
+```bash
+npm install
+```
+
+3. * **Start the development server:** *
+```bash
+npm run dev
+```
+
+4. * **Open your browser:** *
+Navigate to http://localhost:5173 to view the dashboard.
+
+## 💡 Usage Highlights
+* **Trigger the Command Menu:** * Press <kbd>Cmd</kbd> + <kbd>K</kbd> (Mac) or <kbd>Ctrl</kbd> + <kbd>K</kbd> (Windows) anywhere in the app to search pages or trigger actions.
+
+* **Export Data:** * Navigate to the Transactions, Subscriptions, or Investments page to download specific .csv ledgers, or use the "Export Data" button in the Sidebar (Admin mode only) to dump the entire global state to JSON.
+
+* **Fund a Goal:** * Go to the Goals page, click "Add Funds" on an active goal, and watch the UI react. If you reach 100%, enjoy the Golden state transition!
+
+---
+Designed & Developed by [Yash Kumar / yashkumar181]. Built for the modern architect of personal finance.
