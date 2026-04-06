@@ -1,6 +1,6 @@
 # 🏛️ FinServe | Premium Financial Dashboard
 
-FinServe is a modern, responsive Single Page Web Application built with React and Tailwind CSS. Moving beyond standard budgeting apps, it acts as a "Fiscal Command Center" offering oversight over liquid assets, credit liabilities, investment portfolios, and strategic life goals.
+**FinServe** is a modern, responsive Single Page Web Application built with React and Tailwind CSS. Moving beyond standard budgeting apps, it acts as a **"Fiscal Command Center"** offering oversight over liquid assets, credit liabilities, investment portfolios, and strategic life goals.
 
 ## ✨ Key Features & Architecture
 
