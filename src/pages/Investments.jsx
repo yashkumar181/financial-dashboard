@@ -7,7 +7,6 @@ import {
 import { investmentsData, portfolioPerformanceData } from '../data/mockData';
 import AreaChart from '../components/charts/AreaChart';
 
-// Extended initial data to allow for the "View All" expansion
 const initialHoldings = [
   ...investmentsData,
   { id: 4, name: 'Reliance Industries', type: 'EQUITY • 120 UNITS', icon: BarChart3, iconBg: 'bg-blue-100 dark:bg-gray-800', iconColor: 'text-blue-700 dark:text-gray-300', value: '₹32,150.00', dayChange: '+1.2%', dayChangeType: 'positive', totalGain: '+₹5,400.00', roi: '20.1%', gainType: 'positive', goal: 'WEALTH GEN' },
@@ -18,26 +17,20 @@ const initialHoldings = [
 ];
 
 const Investments = () => {
-  // --- CORE STATE ---
   const [holdings, setHoldings] = useState(initialHoldings);
   const [showAllHoldings, setShowAllHoldings] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('gain_desc');
 
-  // --- MODAL STATES ---
   const [isAddHoldingOpen, setIsAddHoldingOpen] = useState(false);
   const [isAddAutomationOpen, setIsAddAutomationOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
-  // --- FORM STATES ---
   const [newHolding, setNewHolding] = useState({ name: '', type: 'EQUITY', invested: '', current: '', goal: 'WEALTH GEN' });
   const [newAuto, setNewAuto] = useState({ name: '', amount: '', date: '' });
 
-  // --- UTILITY FUNCTIONS ---
   const parseCurrency = (str) => parseFloat(str.replace(/[^0-9.-]+/g, "")) || 0;
 
-  // --- DYNAMIC CARD CALCULATIONS ---
-  // Base offsets represent "other accounts" so the numbers remain realistically high when table changes
   const baseCurrentValue = 191050.52; 
   const baseInvestedValue = 150000.00;
   
@@ -52,7 +45,6 @@ const Investments = () => {
   const displayInvestedValue = baseInvestedValue + tableInvestedValue;
   const displayXirr = (((displayCurrentValue - displayInvestedValue) / displayInvestedValue) * 100).toFixed(2);
 
-  // --- FILTERING & SORTING LOGIC ---
   let processedHoldings = holdings.filter(h => 
     h.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     h.type.toLowerCase().includes(searchTerm.toLowerCase())
@@ -68,7 +60,6 @@ const Investments = () => {
 
   const displayedHoldings = showAllHoldings ? processedHoldings : processedHoldings.slice(0, 3);
 
-  // --- ACTION HANDLERS ---
   const handleExportCSV = () => {
     const headers = "Asset Name,Type,Current Value,Total Gain,ROI,Goal\n";
     const csvRows = holdings.map(h => `"${h.name}","${h.type}","${h.value}","${h.totalGain}","${h.roi}","${h.goal}"`).join("\n");
@@ -298,13 +289,11 @@ const Investments = () => {
           <h3 className="text-sm font-bold text-[#0F172A] dark:text-gray-200 whitespace-nowrap">Active Holdings</h3>
           
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-            {/* Search Bar */}
             <div className="relative flex-1 sm:w-64">
               <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-[#a3a3a3]" />
               <input type="text" placeholder="Search holdings..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#262626] text-[#0F172A] dark:text-gray-200 text-xs font-semibold rounded-md focus:outline-none focus:border-[#0A3D8B] dark:focus:border-gray-500 shadow-sm" />
             </div>
             
-            {/* Sort Dropdown */}
             <div className="relative shrink-0">
               <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="w-full pl-3 pr-8 py-2 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-[#262626] text-[#0F172A] dark:text-gray-200 text-[10px] font-bold rounded-md appearance-none focus:outline-none focus:border-[#0A3D8B] shadow-sm">
                 <option value="gain_desc">Sort by Gain (High to Low)</option>
@@ -317,7 +306,6 @@ const Investments = () => {
               </div>
             </div>
 
-            {/* Add Holding Button */}
             <button onClick={() => setIsAddHoldingOpen(true)} className="flex items-center justify-center px-4 py-2 bg-[#0A3D8B] dark:bg-[#262626] text-white rounded-md text-xs font-semibold hover:bg-[#082f6b] dark:hover:bg-[#333] transition-colors shadow-sm shrink-0">
               <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Holding
             </button>
@@ -397,9 +385,7 @@ const Investments = () => {
         )}
       </div>
 
-      {/* --- PORTALS FOR MODALS & SHEETS --- */}
 
-      {/* 1. Add Automation Modal */}
       {isAddAutomationOpen && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsAddAutomationOpen(false)}></div>
@@ -441,7 +427,6 @@ const Investments = () => {
         document.body
       )}
 
-      {/* 2. Audit History Modal */}
       {isHistoryOpen && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsHistoryOpen(false)}></div>
@@ -475,7 +460,6 @@ const Investments = () => {
         document.body
       )}
 
-      {/* 3. Add Holding Sheet */}
       {isAddHoldingOpen && createPortal(
         <div className="fixed inset-0 z-[100] overflow-hidden transition-all duration-300 pointer-events-auto">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-in-out opacity-100" onClick={() => setIsAddHoldingOpen(false)}></div>

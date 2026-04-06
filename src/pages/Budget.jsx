@@ -17,21 +17,18 @@ const Budget = () => {
   return (
     <div className="flex-1 overflow-auto p-4 md:p-10">
       
-      {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between md:items-end mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200 mb-1">Budget Command</h1>
-          <p className="text-sm text-gray-500 dark:text-[#a3a3a3]">Monitor category thresholds and spending velocity.</p>
+          <p className="text-sm text-gray-500 dark:text-[#a3a3a3]">Monitor category and spending velocity.</p>
         </div>
         <button className="flex items-center px-4 py-2 bg-white dark:bg-[#121212] border border-gray-200 dark:border-[#262626] text-[#0F172A] dark:text-gray-200 rounded-lg text-xs font-semibold hover:bg-gray-50 dark:hover:bg-[#1E1E1E] transition-colors shadow-sm">
           <Filter className="w-4 h-4 mr-2" /> Current Month: Oct 2023
         </button>
       </div>
 
-      {/* TOP SECTION: 2 COLUMNS */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
         
-        {/* COLUMN 1: Total Monthly Budget */}
         <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626] flex flex-col justify-between">
           <div className="flex justify-between items-start mb-8">
             <div>
@@ -58,7 +55,6 @@ const Budget = () => {
           </div>
         </div>
 
-        {/* COLUMN 2: Spending By Category (Migrated from Goals) */}
         <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626]">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-widest uppercase">Spending By Category</h3>
@@ -100,7 +96,6 @@ const Budget = () => {
         
       </div>
 
-      {/* BOTTOM SECTION: CATEGORY ENVELOPES */}
       <div className="mb-4">
          <h2 className="text-sm font-bold text-[#0F172A] dark:text-gray-200">Category Envelope Limits</h2>
       </div>

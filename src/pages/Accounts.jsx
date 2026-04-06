@@ -8,7 +8,6 @@ const Accounts = () => {
   const [selectedAccountDetail, setSelectedAccountDetail] = useState(null);
   const [showAuditLog, setShowAuditLog] = useState(false);
 
-  // Dynamic state for Liquid Accounts
   const [liquidAccounts, setLiquidAccounts] = useState([
     {
       id: 1,
@@ -33,7 +32,6 @@ const Accounts = () => {
     }
   ]);
 
-  // Dynamic state for Credit Cards & Liabilities
   const [creditCards, setCreditCards] = useState([
     {
       id: 1,
@@ -44,7 +42,6 @@ const Accounts = () => {
     }
   ]);
 
-  // Form State for New Account/Card
   const [newAccountData, setNewAccountData] = useState({ 
     name: '', 
     subtitle: '', 
@@ -101,7 +98,6 @@ const Accounts = () => {
   return (
     <div className="flex-1 overflow-auto p-4 md:p-10">
       
-      {/* HEADER & TOP BUTTONS */}
       <div className="flex flex-col md:flex-row justify-between md:items-end mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200 mb-1">Accounts & Cards</h1>
@@ -119,7 +115,6 @@ const Accounts = () => {
         </div>
       </div>
 
-      {/* TOP METRICS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626]">
           <p className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-wider mb-2 uppercase">Net Worth</p>
@@ -154,7 +149,6 @@ const Accounts = () => {
               <div className="h-px bg-gray-200 dark:bg-[#262626] flex-1"></div>
             </div>
 
-            {/* DYNAMIC ACCOUNTS GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {liquidAccounts.map((acc) => (
                 <div key={acc.id} className="bg-[#F8F9FA] dark:bg-[#121212] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626] flex flex-col justify-between h-56 animate-fade-slide-up">
@@ -214,7 +208,6 @@ const Accounts = () => {
               <div className="h-px bg-gray-200 dark:bg-[#262626] flex-1"></div>
             </div>
 
-            {/* DYNAMIC CREDIT CARDS GRID */}
             <div className="space-y-4">
               {creditCards.map(card => {
                 const percentage = Math.min((card.due / card.limit) * 100, 100).toFixed(0);
@@ -338,7 +331,7 @@ const Accounts = () => {
                 <td className="px-6 py-4 flex items-center space-x-4">
                   <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-[#262626] text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs font-bold shrink-0">AM</div>
                   <div>
-                    <p className="text-sm font-bold text-[#0F172A] dark:text-gray-200">Amazon Marketplace</p>
+                    <p className="text-sm font-bold text-[#0F172A] dark:text-gray-200">Amazon</p>
                     <p className="text-[10px] text-gray-500 dark:text-[#a3a3a3] font-medium">Nov 22, 2023 • 14:22</p>
                   </div>
                 </td>
@@ -366,10 +359,8 @@ const Accounts = () => {
           </table>
         </div>
       </div>
-
-      {/* --- MODALS PORTALS --- */}
       
-      {/* 1. Add Account Modal */}
+      {/* Add Account */}
       {isAddAccountOpen && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsAddAccountOpen(false)}></div>
@@ -428,7 +419,7 @@ const Accounts = () => {
         document.body
       )}
 
-      {/* 2. Account Details Modal */}
+      {/* Account Details */}
       {selectedAccountDetail && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedAccountDetail(null)}></div>
@@ -451,7 +442,7 @@ const Accounts = () => {
         document.body
       )}
 
-      {/* 3. Audit Log Modal */}
+      {/* Audit Log */}
       {showAuditLog && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAuditLog(false)}></div>

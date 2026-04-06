@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom';
 import { Target, Plus, Trash2, Award, History, X, ArrowRight, TrendingUp, CheckCircle2 } from 'lucide-react';
 
 const Goals = () => {
-  // 1. Core State
   const [goals, setGoals] = useState([
     {
       id: 1,
@@ -41,22 +40,18 @@ const Goals = () => {
     }
   ]);
 
-  // 2. Modal States
   const [isAddGoalOpen, setIsAddGoalOpen] = useState(false);
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false);
   const [selectedGoalForFunds, setSelectedGoalForFunds] = useState(null);
   const [selectedGoalDetails, setSelectedGoalDetails] = useState(null);
 
-  // 3. Form States
   const [newGoal, setNewGoal] = useState({ name: '', target: '', priority: 'Medium', deadline: '' });
   const [fundAmount, setFundAmount] = useState('');
 
-  // 4. Computed Metrics
   const totalTarget = goals.reduce((sum, g) => sum + g.target, 0);
   const totalSaved = goals.reduce((sum, g) => sum + g.current, 0);
   const accomplishedCount = goals.filter(g => g.current >= g.target).length;
 
-  // 5. Handlers
   const handleAddGoal = (e) => {
     e.preventDefault();
     const targetVal = parseFloat(newGoal.target);
@@ -108,7 +103,6 @@ const Goals = () => {
   return (
     <div className="flex-1 overflow-auto p-4 md:p-10 relative">
       
-      {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between md:items-end mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200 mb-1">Strategic Goals</h1>
@@ -119,7 +113,6 @@ const Goals = () => {
         </button>
       </div>
 
-      {/* METRICS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626] transition-all">
           <p className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-widest uppercase mb-1">Total Target Capital</p>
@@ -140,7 +133,6 @@ const Goals = () => {
         </div>
       </div>
 
-      {/* GOALS GRID */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
         {goals.map(goal => {
           const isComplete = goal.current >= goal.target;
@@ -224,9 +216,7 @@ const Goals = () => {
         })}
       </div>
 
-      {/* --- PORTALS --- */}
 
-      {/* 1. Add Goal Slide-out Sheet */}
       {isAddGoalOpen && createPortal(
         <div className="fixed inset-0 z-[100] overflow-hidden pointer-events-auto">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={() => setIsAddGoalOpen(false)}></div>
@@ -274,7 +264,6 @@ const Goals = () => {
         document.body
       )}
 
-      {/* 2. Add Funds Modal */}
       {isAddFundsOpen && selectedGoalForFunds && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsAddFundsOpen(false)}></div>
@@ -300,7 +289,6 @@ const Goals = () => {
         document.body
       )}
 
-      {/* 3. Goal Details / History Modal */}
       {selectedGoalDetails && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedGoalDetails(null)}></div>

@@ -6,8 +6,6 @@ import {
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 import TransactionSheet from './TransactionSheet';
-
-// Import all data sources for the global export
 import { 
   merchantsData, chartDataMap, subscriptionsData, 
   investmentsData, portfolioPerformanceData 
@@ -24,34 +22,26 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
       : baseClass + "text-gray-500 dark:text-[#a3a3a3] hover:bg-gray-100 dark:hover:bg-[#121212] border-transparent";
   };
 
-  // Logic to export the entire dashboard state as a single Combined CSV file
   const handleExportAllData = () => {
-    // Helper function to cleanly convert any array of objects into CSV rows
     const arrayToCSV = (dataArray, title) => {
       if (!dataArray || dataArray.length === 0) return "";
       
-      // Get the column headers from the first object's keys
       const headers = Object.keys(dataArray[0]);
-      
-      // Create the title row and the header row
       let csvString = `"${title}"\n`;
       csvString += headers.map(header => `"${header}"`).join(",") + "\n";
       
-      // Map through all the rows
       dataArray.forEach(row => {
         const rowValues = headers.map(header => {
           const val = row[header];
-          // If the value is an object (like a tag), stringify it. Otherwise, clean quotes.
           const cleanVal = typeof val === 'object' ? JSON.stringify(val) : String(val);
           return `"${cleanVal.replace(/"/g, '""')}"`;
         });
         csvString += rowValues.join(",") + "\n";
       });
       
-      return csvString + "\n\n"; // Add spacing between tables
+      return csvString + "\n\n"; 
     };
 
-    // Compile all sections into one massive CSV string
     let finalCSVContent = "";
     finalCSVContent += arrayToCSV(transactions, "--- TRANSACTION LEDGER ---");
     finalCSVContent += arrayToCSV(subscriptionsData, "--- ACTIVE SUBSCRIPTIONS ---");
@@ -59,11 +49,9 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
     finalCSVContent += arrayToCSV(merchantsData, "--- PRIMARY MERCHANTS ---");
     finalCSVContent += arrayToCSV(portfolioPerformanceData, "--- PORTFOLIO PERFORMANCE ---");
 
-    // Create the downloadable blob
     const blob = new Blob([finalCSVContent], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     
-    // Trigger download
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", url);
     downloadAnchorNode.setAttribute("download", `Fiscal_Clarity_Master_Export_${new Date().toISOString().split('T')[0]}.csv`);

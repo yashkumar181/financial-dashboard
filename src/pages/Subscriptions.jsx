@@ -6,16 +6,13 @@ import {
 import { subscriptionsData } from '../data/mockData';
 
 const Subscriptions = () => {
-  // 1. State for subscriptions and the slide-out sheet
   const [subscriptions, setSubscriptions] = useState(subscriptionsData);
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
   
-  // 2. Form state for adding a new subscription
   const [newSub, setNewSub] = useState({
     name: '', plan: '', cost: '', cycle: 'MONTHLY', nextDate: new Date().toISOString().split('T')[0]
   });
 
-  // 3. Dynamic Calculations
   const totalMonthlyBurn = subscriptions.reduce((total, sub) => {
     const costValue = parseFloat(sub.cost.replace(/[^0-9.-]+/g, ""));
     return total + (isNaN(costValue) ? 0 : costValue);
@@ -25,7 +22,6 @@ const Subscriptions = () => {
   const activeCount = subscriptions.length;
   const dailyCost = (totalMonthlyBurn / 30).toFixed(2);
 
-  // 4. Action Functions
   const handleDelete = (id) => {
     setSubscriptions(subscriptions.filter(sub => sub.id !== id));
   };
@@ -223,7 +219,6 @@ const Subscriptions = () => {
         </div>
       </div>
 
-      {/* --- ADD SUBSCRIPTION SLIDE-OUT SHEET --- */}
       {isAddSheetOpen && createPortal(
         <div className="fixed inset-0 z-[100] overflow-hidden transition-all duration-300 pointer-events-auto">
           <div 

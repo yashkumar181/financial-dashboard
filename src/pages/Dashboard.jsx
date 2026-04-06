@@ -11,7 +11,6 @@ const Dashboard = () => {
   const { transactions } = useFinance();
   const [chartTimeframe, setChartTimeframe] = useState('monthly');
 
-  // Dynamic data for the top metric cards based on the selected tab
   const metricsData = {
     monthly: {
       netWorth: '₹2,482,910.42', nwChange: '+12.4%', nwClass: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400',

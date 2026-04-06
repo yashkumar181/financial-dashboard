@@ -14,11 +14,9 @@ const AreaChart = ({ data }) => {
   const xMap = (idx) => paddingLeft + (idx / (data.length - 1)) * chartWidth;
   const yMap = (val) => chartHeight - (val / maxVal) * chartHeight;
 
-  // Paths for the solid lines
   const lineInvested = data.map((d, i) => `${xMap(i)},${yMap(d.invested)}`).join(' ');
   const lineCurrent = data.map((d, i) => `${xMap(i)},${yMap(d.current)}`).join(' ');
 
-  // Paths for the shaded areas (connecting to the bottom corners)
   const areaInvested = `${xMap(0)},${chartHeight} ${lineInvested} ${xMap(data.length - 1)},${chartHeight}`;
   const areaCurrent = `${xMap(0)},${chartHeight} ${lineCurrent} ${xMap(data.length - 1)},${chartHeight}`;
 

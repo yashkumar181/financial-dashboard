@@ -9,7 +9,6 @@ const CommandMenu = () => {
   const inputRef = useRef(null);
   const navigate = useNavigate();
 
-  // Listen for Cmd+K or Ctrl+K to open/close
   useEffect(() => {
     const down = (e) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
@@ -24,7 +23,6 @@ const CommandMenu = () => {
     return () => document.removeEventListener('keydown', down);
   }, []);
 
-  // Auto-focus input when opened
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 100);
@@ -44,7 +42,6 @@ const CommandMenu = () => {
     { section: 'Pages', name: 'Goals', icon: Target, action: () => navigate('/goals') },
     { section: 'Pages', name: 'Settings', icon: Settings, action: () => navigate('/settings') },
     { section: 'Actions', name: 'Add New Transaction', icon: Plus, action: () => {
-        // We dispatch a custom event that our Sidebar/Layout can listen to open the sheet
         document.dispatchEvent(new CustomEvent('open-transaction-sheet'));
       }
     }
@@ -60,7 +57,7 @@ const CommandMenu = () => {
         onClick={() => setIsOpen(false)}
       ></div>
 
-      {/* Command Palette Modal */}
+      {/* Command Palette */}
       <div className="relative w-full max-w-lg bg-[#F8F9FA] dark:bg-[#121212] rounded-xl shadow-2xl border border-gray-200 dark:border-[#262626] overflow-hidden flex flex-col animate-fade-slide-up">
         
         {/* Search Input */}
@@ -79,7 +76,7 @@ const CommandMenu = () => {
           </kbd>
         </div>
 
-        {/* Results List */}
+        {/* Results */}
         <div className="max-h-[60vh] overflow-y-auto p-2">
           {filteredActions.length === 0 ? (
             <p className="p-4 text-sm text-center text-gray-500 dark:text-[#a3a3a3]">No results found.</p>

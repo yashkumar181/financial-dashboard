@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, CreditCard, ReceiptText, TrendingUp, RefreshCw, Target } from 'lucide-react';
 
 const MobileNav = () => {
-  // Mapped exactly to Shyara's names and icons, excluding Settings
   const navItems = [
     { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/accounts', icon: CreditCard, label: 'Accounts' },

@@ -1,19 +1,16 @@
-# 🏛️ Fiscal Clarity | Premium Financial Dashboard
+# 🏛️ FinServe | Premium Financial Dashboard
 
-> **The Precision Curator.** A high-end, highly interactive frontend application designed for comprehensive personal wealth, liability, and goal management.
+> **FinServe ** A high-end, highly interactive frontend application designed for personal wealth, liability and goal management.
 
-![Fiscal Clarity Banner](https://via.placeholder.com/1200x400/0a0a0a/ffffff?text=Fiscal+Clarity+-+Premium+Financial+Dashboard)
-
-Fiscal Clarity (formerly Shyara) is a modern, responsive Single Page Application (SPA) built with React and Tailwind CSS. Moving beyond standard budgeting apps, it acts as a "Fiscal Command Center," offering surgical oversight over liquid assets, credit liabilities, investment portfolios, and strategic life goals.
+FinServe is a modern, responsive Single Page Web Application built with React and Tailwind CSS. Moving beyond standard budgeting apps, it acts as a "Fiscal Command Center" offering oversight over liquid assets, credit liabilities, investment portfolios, and strategic life goals.
 
 ## ✨ Key Features & Architecture
 
 ### 🧭 Global UI & Experience
-* **Premium Dark/Light Mode:** Seamless theme switching featuring a custom `#0a0a0a` pitch-black dark mode and elevated `#121212` cards.
+* **Premium Dark/Light Mode:** Seamless theme switching featuring a custom pitch-black dark mode and elevated cards.
 * **Global Command Palette (`Cmd + K`):** A spotlight-style search overlay powered by React Portals, allowing instantaneous navigation across the app and quick-action triggers.
-* **Fluid Page Transitions:** Custom CSS keyframe animations wrapper (`<PageTransition />`) ensuring smooth, native-feeling route changes.
 * **Responsive Architecture:** Dual-navigation setup featuring a robust desktop sidebar and a sleek mobile slide-out menu with a hamburger toggle.
-* **Global State Export:** A one-click administrative tool in the Sidebar to serialize and export the entire React Context state into a `.json` backup file.
+* **Global State Export:** A one-click administrative tool in the Sidebar to serialize and export the entire React Context state into a `.csv` backup file.
 
 ### 🎯 Gamified Strategic Goals (Newly Rebuilt)
 * **The "Golden State":** When a financial goal reaches 100% funding, the UI dynamically transitions into a premium Gold/Amber theme to celebrate the achievement.
@@ -22,12 +19,11 @@ Fiscal Clarity (formerly Shyara) is a modern, responsive Single Page Application
 
 ### 🎯 Budget Command Center
 * **Unified Spending Oversight:** Combines total monthly budget tracking with a detailed "Cost by Category" progress breakdown.
-* **Envelope Budgeting:** Tracks category-specific thresholds (Housing, Leisure, Groceries) with real-time visual progress bars and color-coded warning limits when spending velocity exceeds projections.
+* **Budgeting:** Tracks category-specific thresholds (Housing, Leisure, Groceries) with real-time visual progress bars and color-coded warning limits when spending velocity exceeds projections.
 
 ### 🏦 Accounts & Liabilities
 * **Dynamic Asset Tracking:** Full CRUD capabilities to link both liquid accounts (Bank/Digital Wallets) and Credit Liabilities.
-* **Credit Utilization Radials:** Custom SVG radial progress indicators mathematically driven by current due vs. total credit limit.
-* **Simulated Reconciliation:** Functional UI states for account syncing and audit logging.
+* **Reconciliation:** Functional UI states for account syncing and audit logging.
 
 ### 📈 Investment Portfolio
 * **Holdings Management:** Track Equities, Mutual Funds, Commodities, and Real Estate. Automatically recalculates Total Invested, Current Value, and Portfolio XIRR.
@@ -46,8 +42,8 @@ Fiscal Clarity (formerly Shyara) is a modern, responsive Single Page Application
 
 ## 🛠️ Tech Stack
 
-* **Core:** React 18 (Vite)
-* **Routing:** React Router DOM v6
+* **Core:** React
+* **Routing:** React Router DOM
 * **Styling:** Tailwind CSS v3 (Utility-first, heavily customized color palette)
 * **Icons:** Lucide React (Consistent, stroke-based iconography)
 * **State Management:** React Hooks & Context API (`FinanceContext.jsx`)
@@ -59,30 +55,30 @@ Fiscal Clarity (formerly Shyara) is a modern, responsive Single Page Application
 
 ```text
 fiscal-clarity/
-├── public/                 # Static assets (Favicon)
+├── public/                        # Static assets (Favicon)
 ├── src/
-│   ├── components/         # Reusable UI elements
-│   │   ├── charts/         # Custom SVG Line/Area charts
-│   │   ├── CommandMenu.jsx # Cmd+K Palette
-│   │   ├── Header.jsx      # Top navigation, Mobile Toggle, & Theme toggle
-│   │   ├── Sidebar.jsx     # Desktop/Mobile routing & Global Export
-│   │   └── TransactionSheet.jsx # React Portal slide-out forms
+│   ├── components/                # Reusable UI elements
+│   │   ├── charts/                # Custom SVG Line/Area charts
+│   │   ├── CommandMenu.jsx        # Cmd+K Palette
+│   │   ├── Header.jsx             # Top navigation, Mobile Toggle, & Theme toggle
+│   │   ├── Sidebar.jsx            # Desktop/Mobile routing & Global Export
+│   │   └── TransactionSheet.jsx   # React Portal slide-out forms
 │   ├── context/
-│   │   └── FinanceContext.jsx # Global State & Mock Data provider
+│   │   └── FinanceContext.jsx     # Global State & Mock Data provider
 │   ├── data/
-│   │   └── mockData.js     # Initial JSON structures
-│   ├── pages/              # Route-level components
+│   │   └── mockData.js            # Initial JSON structures
+│   ├── pages/                     # Route-level components
 │   │   ├── Dashboard.jsx
 │   │   ├── Accounts.jsx
 │   │   ├── Transactions.jsx
 │   │   ├── Subscriptions.jsx
 │   │   ├── Investments.jsx
-│   │   ├── Budget.jsx      # Budget & Category Tracking
-│   │   └── Goals.jsx       # Gamified Goal Funding
-│   ├── App.jsx             # Router configuration
-│   └── index.css           # Tailwind directives & custom animations
+│   │   ├── Budget.jsx             # Budget & Category Tracking
+│   │   └── Goals.jsx              # Gamified Goal Funding
+│   ├── App.jsx                    # Router configuration
+│   └── index.css                  # Tailwind directives & custom animations
 ├── package.json
-├── tailwind.config.js      # Custom theme definitions
+├── tailwind.config.js             # Custom theme definitions
 └── vite.config.js
 ```
 
@@ -92,8 +88,8 @@ fiscal-clarity/
 * **Installation** *
 1. * **Clone the repository:** *
 ```bash
-git clone [https://github.com/YOUR_USERNAME/Shyara-Finance-Dashboard.git](https://github.com/YOUR_USERNAME/Shyara-Finance-Dashboard.git)
-cd Shyara-Finance-Dashboard
+git clone [https://github.com/yashkumar181/financial-dashboard.git](https://github.com/yashkumar181/financial-dashboard.git)
+cd finance-dashboard
 ```
 
 2. * **Install dependencies:** *
@@ -112,9 +108,9 @@ Navigate to http://localhost:5173 to view the dashboard.
 ## 💡 Usage Highlights
 * **Trigger the Command Menu:** * Press <kbd>Cmd</kbd> + <kbd>K</kbd> (Mac) or <kbd>Ctrl</kbd> + <kbd>K</kbd> (Windows) anywhere in the app to search pages or trigger actions.
 
-* **Export Data:** * Navigate to the Transactions, Subscriptions, or Investments page to download specific .csv ledgers, or use the "Export Data" button in the Sidebar (Admin mode only) to dump the entire global state to JSON.
+* **Export Data:** * Navigate to the Transactions, Subscriptions, or Investments page to download specific .csv ledgers, or use the "Export Data" button in the Sidebar (Admin mode only) to dump the entire global state to CSV.
 
 * **Fund a Goal:** * Go to the Goals page, click "Add Funds" on an active goal, and watch the UI react. If you reach 100%, enjoy the Golden state transition!
 
 ---
-Designed & Developed by [Yash Kumar / yashkumar181]. Built for the modern architect of personal finance.
+Designed & Developed by [Yash Kumar/ @yashkumar181]. Built for the modern architect of personal finance.
