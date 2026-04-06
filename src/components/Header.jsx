@@ -67,7 +67,7 @@ const Header = () => {
         
         <div className="flex items-center space-x-3 pl-2 border-l border-gray-200 dark:border-[#262626]">
           <div className="text-right hidden sm:block">
-            <p className="text-sm font-semibold text-[#0F172A] dark:text-gray-200">Alex Stratton</p>
+            <p className="text-sm font-semibold text-[#0F172A] dark:text-gray-200">Yash Kumar</p>
             <p className="text-[10px] font-bold text-gray-400 dark:text-[#a3a3a3] tracking-wider uppercase">
               {role === 'Admin' ? 'Senior Auditor' : 'Guest Viewer'}
             </p>
