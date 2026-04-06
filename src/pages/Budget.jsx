@@ -17,6 +17,7 @@ const Budget = () => {
   return (
     <div className="flex-1 overflow-auto p-4 md:p-10">
       
+      {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between md:items-end mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#0F172A] dark:text-gray-200 mb-1">Budget Command</h1>
@@ -27,36 +28,83 @@ const Budget = () => {
         </button>
       </div>
 
-      {/* Top Summary */}
-      <div className="bg-[#F8F9FA] dark:bg-[#121212] p-8 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626] mb-8 flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="flex items-center gap-6 w-full md:w-auto">
-          <div className="w-16 h-16 rounded-full border-4 border-gray-200 dark:border-[#262626] flex items-center justify-center relative">
-            <svg className="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-              <circle cx="18" cy="18" r="15.9155" fill="none" stroke="currentColor" strokeWidth="4" className={totalPercentage > 95 ? "text-red-500" : "text-[#0A3D8B] dark:text-gray-400"} strokeDasharray={`${totalPercentage}, 100`}></circle>
-            </svg>
-            <span className="text-xs font-bold text-[#0F172A] dark:text-gray-200">{totalPercentage}%</span>
+      {/* TOP SECTION: 2 COLUMNS */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+        
+        {/* COLUMN 1: Total Monthly Budget */}
+        <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626] flex flex-col justify-between">
+          <div className="flex justify-between items-start mb-8">
+            <div>
+              <p className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] uppercase tracking-widest mb-1">Total Monthly Budget</p>
+              <div className="flex items-baseline gap-2">
+                <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] dark:text-gray-200">₹{totalSpent.toLocaleString()}</h2>
+                <span className="text-sm font-bold text-gray-400 dark:text-gray-600">/ ₹{totalAllocated.toLocaleString()}</span>
+              </div>
+            </div>
+            <div className="w-16 h-16 rounded-full border-4 border-gray-200 dark:border-[#262626] flex items-center justify-center relative shrink-0">
+              <svg className="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="15.9155" fill="none" stroke="currentColor" strokeWidth="4" className={totalPercentage > 95 ? "text-red-500" : "text-[#0A3D8B] dark:text-gray-400"} strokeDasharray={`${totalPercentage}, 100`}></circle>
+              </svg>
+              <span className="text-xs font-bold text-[#0F172A] dark:text-gray-200">{totalPercentage}%</span>
+            </div>
           </div>
-          <div>
-            <p className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] uppercase tracking-widest mb-1">Total Monthly Budget</p>
-            <div className="flex items-baseline gap-2">
-              <h2 className="text-3xl font-bold text-[#0F172A] dark:text-gray-200">₹{totalSpent.toLocaleString()}</h2>
-              <span className="text-sm font-bold text-gray-400 dark:text-gray-600">/ ₹{totalAllocated.toLocaleString()}</span>
+          
+          <div className="bg-white dark:bg-[#0a0a0a] p-4 rounded-xl border border-gray-200 dark:border-[#262626] flex items-start gap-4 shadow-sm mt-auto">
+            <TrendingUp className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs font-bold text-[#0F172A] dark:text-gray-200 mb-1">Spending Velocity is Optimal</p>
+              <p className="text-[10px] text-gray-500 dark:text-[#a3a3a3] leading-relaxed">You are currently 4% under your projected spend for this time of the month. Great job managing Leisure expenses.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* COLUMN 2: Spending By Category (Migrated from Goals) */}
+        <div className="bg-[#F8F9FA] dark:bg-[#121212] p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 dark:border-[#262626]">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-[10px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-widest uppercase">Spending By Category</h3>
+            <PieChart className="w-4 h-4 text-gray-400 dark:text-gray-600" />
+          </div>
+          <h2 className="text-2xl lg:text-3xl font-bold text-[#0F172A] dark:text-gray-200 mb-6">
+            ₹{totalSpent.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+          </h2>
+          
+          <div className="flex items-center justify-between">
+            <div className="relative w-32 h-32">
+              <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
+                <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#E5E7EB" className="dark:stroke-[#0a0a0a]" strokeWidth="4"></circle>
+                <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#1E3A8A" className="dark:stroke-gray-400" strokeWidth="4" strokeDasharray="45 55" strokeDashoffset="0"></circle>
+                <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#3B82F6" className="dark:stroke-gray-500" strokeWidth="4" strokeDasharray="25 75" strokeDashoffset="-45"></circle>
+                <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#7F1D1D" className="dark:stroke-gray-600" strokeWidth="4" strokeDasharray="15 85" strokeDashoffset="-70"></circle>
+              </svg>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center mt-1">
+                <span className="block text-[8px] font-bold text-gray-500 dark:text-[#a3a3a3] tracking-widest uppercase">Total</span>
+                <span className="block text-sm font-bold text-[#0F172A] dark:text-gray-200">100%</span>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-xs w-24">
+                <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-[#1E3A8A] dark:bg-gray-400 mr-2"></div><span className="text-gray-600 dark:text-[#a3a3a3]">Housing</span></div>
+                <span className="font-bold text-[#0F172A] dark:text-gray-200">45%</span>
+              </div>
+              <div className="flex items-center justify-between text-xs w-24">
+                <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-[#3B82F6] dark:bg-gray-500 mr-2"></div><span className="text-gray-600 dark:text-[#a3a3a3]">Lifestyle</span></div>
+                <span className="font-bold text-[#0F172A] dark:text-gray-200">25%</span>
+              </div>
+              <div className="flex items-center justify-between text-xs w-24">
+                <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-[#7F1D1D] dark:bg-gray-600 mr-2"></div><span className="text-gray-600 dark:text-[#a3a3a3]">Subs</span></div>
+                <span className="font-bold text-[#0F172A] dark:text-gray-200">15%</span>
+              </div>
             </div>
           </div>
         </div>
         
-        <div className="bg-white dark:bg-[#0a0a0a] p-4 rounded-xl border border-gray-200 dark:border-[#262626] flex items-start gap-4 w-full md:max-w-md shadow-sm">
-          <TrendingUp className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-          <div>
-            <p className="text-xs font-bold text-[#0F172A] dark:text-gray-200 mb-1">Spending Velocity is Optimal</p>
-            <p className="text-[10px] text-gray-500 dark:text-[#a3a3a3] leading-relaxed">You are currently 4% under your projected spend for this time of the month. Great job managing Leisure expenses.</p>
-          </div>
-        </div>
       </div>
 
-      {/* Category Breakdown */}
-      <h2 className="text-sm font-bold text-[#0F172A] dark:text-gray-200 mb-4">Category Envelope Limits</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      {/* BOTTOM SECTION: CATEGORY ENVELOPES */}
+      <div className="mb-4">
+         <h2 className="text-sm font-bold text-[#0F172A] dark:text-gray-200">Category Envelope Limits</h2>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {budgetCategories.map((cat, idx) => {
           const percent = Math.min((cat.spent / cat.allocated) * 100, 100);
           return (
